@@ -376,20 +376,68 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 .visitor-note a, .visitor-note button { display: inline-block; min-height: 44px; box-sizing: border-box; padding: 12px; margin: 6px 0; font: inherit; }
 .visitor-note a { background: #302c20; color: #fff9d8; border-radius: 4px; }
 .visitor-note :focus-visible, .visitor-note-toggle:focus-visible { outline: 3px solid #276a98; outline-offset: 3px; }
+
+.command-menu { display: grid; gap: 8px; max-height: 45dvh; overflow: auto; }
+.command-menu button { min-height: 44px; padding: 10px 14px; border: 0; border-radius: 12px; background: #fbfaf7; color: #26282b; font: inherit; text-align: left; cursor: pointer; }
+.command-menu button[aria-pressed=true] { background: #26282b; color: white; }
+.command-menu p { margin: 0; font-size: 12px; }
+.command-menu :focus-visible, #commandAdd:focus-visible, #commandOptions:focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
+/* Les réglages deviennent une feuille contextuelle au-dessus de la barre. */
+.panel { top: auto; bottom: 92px; left: 50%; right: auto; width: min(680px, calc(100% - 24px)); max-height: min(340px, calc(100dvh - 180px)); border-radius: 20px; padding: 0; transform: translate(-50%, 30px); transition: opacity .2s, transform .2s; opacity: 0; }
+.panel.open { transform: translate(-50%, 0); opacity: 1; }
+body.editing .stage { margin-right: 0; }
+.pn-body { overscroll-behavior: contain; touch-action: pan-y; }
+
+@media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
+
+.demo-stamp { position: absolute; left: 60%; top: 8px; width: 48px; height: 52px; border: 3px dotted #866d91; background: #eee0f5; color: #382642; font: 20px sans-serif; cursor: pointer; pointer-events: auto; transform: rotate(-9deg); box-shadow: 2px 3px 4px #0003; }
+.demo-stamp::after { content: 'DÉMO'; display: block; font: 8px sans-serif; }
+body.signal-demo .handle span { border-radius: 50%; outline: 2px solid #c2a2df; outline-offset: 3px; animation: orb-notice .7s ease-in-out 2; }
+@keyframes orb-notice { 25% { transform: translateX(-4px) rotate(-9deg); } 75% { transform: translateX(4px) rotate(9deg); } }
+@keyframes stamp-peel { from { transform: translateY(-36px) rotate(8deg); opacity: .6; } to { transform: translateY(0) rotate(-9deg); opacity: 1; } }
+.demo-stamp { animation: stamp-peel .6s ease-out; }
+@media(prefers-reduced-motion: reduce) { body.signal-demo .handle span, .demo-stamp { animation: none; } }
+.scene-catalog { max-height: 65dvh; overflow: auto; touch-action: pan-y; }
+.scene-catalog header { display: flex; justify-content: space-between; align-items: center; }
+.scene-catalog p { font-size: 12px; line-height: 1.5; }
+.scene-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.scene-catalog button { min-height: 44px; border: 0; border-radius: 12px; padding: 10px; background: #fbfaf7; color: #26282b; font: inherit; cursor: pointer; }
+.scene-tiles button { text-align: left; background: linear-gradient(135deg,#d7e9ec,#f6dbb9); }
+.scene-tiles small { display: block; margin-top: 6px; }
+.scene-catalog :focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
+.logo { pointer-events: auto; cursor: pointer; }
+.identity-menu { position: fixed; top: 68px; left: 14px; z-index: 20; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; border-radius: 16px; padding: 14px; background: #fbfaf7; color: #26282b; box-shadow: 0 8px 30px #0003; }
+.identity-menu button { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.identity-menu p { font-size: 12px; line-height: 1.5; }
+/* Signature du + reprise de dock/dock.css dans AIMEStudio. */
+#commandAdd { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(#0B0B0D,#0B0B0D) padding-box, conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box; display: grid; place-items: center; padding: 0; }
+#commandAdd span { position: relative; width: 18px; height: 18px; transition: transform .25s ease; }
+#commandAdd span::before, #commandAdd span::after { content: ''; position: absolute; left: 50%; top: 50%; width: 18px; height: 2.2px; border-radius: 2px; background: #fff; transform: translate(-50%,-50%); }
+#commandAdd span::after { transform: translate(-50%,-50%) rotate(90deg); }
+#commandAdd[aria-expanded=true] span { transform: rotate(45deg); }
+@media(prefers-reduced-motion: reduce) { #commandAdd span { transition: none; } }
+/* La lecture du contexte quitte la capsule, sans ajouter une seconde barre. */
+.capsule-compose input { flex: 1; min-width: 0; height: 28px; padding: 0 6px; border: 0; background: transparent; color: inherit; font: inherit; user-select: text; touch-action: auto; }
+.capsule-compose input:focus { outline: none; }
+.capsule-compose:focus-within { box-shadow: 0 0 0 2px var(--muted); }
+.sr-note { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.note-status { position: absolute; bottom: calc(100% + 8px); left: 8px; right: 8px; margin: 0; padding: 6px 10px; border-radius: 10px; background: var(--hud-bg); color: var(--ink); font-size: 12px; }
+body.composing .capsule-wrap > .day:not(.capsule-compose) { display: none; }
+.slat.causal-accent { outline: 2px solid #c5a8d4; outline-offset: -2px; animation: causal-light .8s ease-out; }
+@keyframes causal-light { from { filter: brightness(1.18); } to { filter: brightness(1); } }
+@media(prefers-reduced-motion: reduce) { .slat.causal-accent { animation: none; } }
+.header-context { position: absolute; z-index: 8; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 40%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #26282b; font-size: 13px; text-align: center; pointer-events: auto; }
+#headerMusic { min-width: 0; }
+#mTitle { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
+#mTime { font-size: 11px; }
+.handle::before { display: none; }
+.handle span { display: block; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 28% 22%, #fff 0 3%, #ffffffa0 5%, transparent 27%), radial-gradient(circle at 65% 80%, #15152f99, transparent 65%), conic-gradient(#db829e,#edc77c,#91c9a6,#8fbce0,#b299d7,#db829e); border: 1px solid #ffffff70; box-shadow: inset -5px -6px 8px #19152b80, inset 3px 3px 5px #fff8, 2px 4px 5px #0006; filter: none; }
+body.signal-demo .handle span { width: 32px; height: 32px; }
+@media(max-width: 600px) { .header-context { width: 44%; font-size: 11px; flex-wrap: wrap; gap: 0 4px; } .logo { max-width: 26%; overflow: hidden; } .window-guide-toggle { top: 8px; } }
 </style>
 
-<button class="visitor-note-toggle" id="visitorNoteToggle" type="button" aria-haspopup="dialog">Déposer un post-it</button>
-<dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
-  <h2 id="visitorNoteTitle">Un mot sur ma fenêtre</h2>
-  <p id="visitorNoteHelp">Ce post-it est privé, il ne sera pas affiché sur le store. Prépare ton message ici, puis confirme tes coordonnées et l’envoi sur AIMEStudio.</p>
-  <label for="visitorNoteText">Ton message (3 000 caractères maximum)</label>
-  <textarea id="visitorNoteText" maxlength="3000" placeholder="Une question, une date de mariage, une idée…"></textarea>
-  <p>Rien n’est envoyé à cette étape. Une demande de réservation ne confirme pas une réservation.</p>
-  <a id="visitorNoteContinue" href="https://aimestudio.vercel.app/contact/openaime/" rel="noreferrer">Continuer sur AIMEStudio</a>
-  <p>Le brouillon accompagne le lien : garde-le privé. Il n’est pas sauvegardé dans ce navigateur.</p>
-  <form method="dialog"><button type="submit">Revenir à la fenêtre</button></form>
-</dialog>
 <script src="visitor-note.js" defer></script>
+<script src="identity.js" defer></script>
 
 <button class="window-guide-toggle" id="guideToggle" type="button" aria-controls="windowGuide" aria-expanded="false">Découvrir la fenêtre</button>
 <aside class="window-guide" id="windowGuide" aria-labelledby="guideTitle" hidden>
@@ -430,7 +478,15 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   <div id="infoStars"></div>
   <button class="hotspot" id="postitBtn" type="button" aria-label="Voir le détail de la tâche du post-it" hidden=""></button>
 
-  <span class="logo" id="logo">Matt Mez</span>
+  <button class="logo" id="logo" type="button" aria-expanded="false" aria-controls="identityMenu">Matt Mez</button>
+  <div class="header-context" id="headerContext">
+    <span id="headerDate"></span><time id="clockTime">--:--</time>
+    <span id="headerMusic" hidden><span id="mTitle">—</span><small id="mTime">0:00</small></span>
+  </div>
+  <div id="identityMenu" class="identity-menu" hidden>
+    <button type="button" id="identityHome">Ma fenêtre</button>
+    <p>Une seule fenêtre. Personnalisation temporaire, sans publication.</p>
+  </div>
   <button class="setbtn" id="setBtn" type="button" aria-label="Réglages de la fenêtre" aria-controls="panel" aria-expanded="false" title="Réglages" hidden="">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
   </button>
@@ -454,16 +510,49 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
         <div class="pl-head"><span class="lbl">Playlist</span><span class="pl-count" id="plCount"></span></div>
         <ol class="pl-list" id="plList"></ol>
       </div>
-      <section class="day" aria-label="Moment de la journée">
+      <div class="pop command-menu" id="commandModes" hidden>
+        <strong>Lecture de la capsule</strong>
+        <button type="button" id="toolTime" aria-pressed="true">◷ Temps et phases</button>
+        <button type="button" id="toolMusic" aria-pressed="false">♫ Musique</button>
+        <button type="button" id="toolScenes" aria-controls="sceneCatalog" aria-expanded="false">▦ Scènes</button>
+        <p>Médias, Personnes et Jour J : à venir.</p>
+      </div>
+      <div class="pop command-menu" id="commandMore" hidden>
+        <strong>Outils de la fenêtre</strong>
+        <button type="button" id="demoSignal" aria-pressed="false">Essayer un signal · démonstration</button>
+        <p id="signalStatus" role="status"></p>
+        <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">Personnaliser ma vue</button>
+        <p>Essai temporaire, sans modifier la fenêtre publiée.</p>
+      </div>
+      <div class="pop scene-catalog" id="sceneCatalog" hidden aria-label="Catalogue de scènes">
+        <header><strong>Scènes · aperçu local</strong><button type="button" id="sceneClose" aria-label="Fermer le catalogue">×</button></header>
+        <p>Ambiances simulées, sans effet sur les réservations ni la météo réelle. Aucun son n’est démarré.</p>
+        <div id="sceneTiles" class="scene-tiles"></div>
+        <p id="sceneStatus" role="status"></p>
+        <button type="button" id="sceneRestore" disabled>Rétablir l’ambiance précédente</button>
+      </div>
+      <form id="visitorNote" class="day capsule-compose" hidden aria-label="Message privé, saisie progressive">
+        <button class="icon" type="button" id="noteBack" aria-label="Revenir sans perdre le brouillon">←</button>
+        <label class="sr-note" for="visitorNoteText">Message privé, de 20 à 2 400 caractères</label>
+        <input id="visitorNoteText" maxlength="2400" placeholder="Votre message privé…" aria-describedby="noteStatus">
+        <label class="sr-note" for="noteDate">Date souhaitée, facultative</label>
+        <input type="date" id="noteDate" hidden aria-label="Date souhaitée, facultative">
+        <label class="sr-note" for="notePlace">Lieu, facultatif</label>
+        <input id="notePlace" maxlength="180" hidden placeholder="Ville ou lieu, facultatif…">
+        <button class="icon" type="button" id="noteFields" aria-label="Champ suivant : message, date ou lieu">+</button>
+        <button class="icon" type="button" id="noteDiscard" aria-label="Effacer le brouillon">×</button>
+        <button class="icon" type="submit" id="visitorNoteContinue" aria-label="Vérifier le brouillon dans AIMEStudio">→</button>
+      </form>
+      <p id="noteStatus" class="note-status" role="status" hidden></p>
+      <section class="day" id="commandCapsule" aria-label="Commandes de la fenêtre">
+        <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false"><span aria-hidden="true"></span></button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
-        <time class="t-only" id="clockTime">--:--</time>
         <button class="phase-btn t-only" id="phaseBtn" type="button" title="Phase suivante">…</button>
         <div class="detail" id="detail" aria-live="polite" hidden=""><b id="dtTitle"></b><span id="dtText"></span><a id="dtLink" target="_blank" rel="noopener" hidden=""></a></div>
         <button class="icon" id="dtClose" type="button" aria-label="Fermer le détail" hidden="">×</button>
         <button class="icon m-only" id="mPrev" type="button" aria-label="Morceau précédent" title="Précédent"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-9-6z"></path><rect x="6" y="6" width="2" height="12" rx="1"></rect></svg></button>
         <button class="icon m-only m-play" id="mPlay" type="button" aria-label="Lecture" title="Lecture"><svg viewBox="0 0 24 24" fill="currentColor"><path class="i-play" d="M8 5.5v13l10.5-6.5z"></path><g class="i-pause"><rect x="7" y="5.5" width="3.4" height="13" rx="1"></rect><rect x="13.6" y="5.5" width="3.4" height="13" rx="1"></rect></g></svg></button>
         <button class="icon m-only" id="mNext" type="button" aria-label="Morceau suivant" title="Suivant"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6v12l9-6z"></path><rect x="16" y="6" width="2" height="12" rx="1"></rect></svg></button>
-        <div class="m-only m-info"><span class="m-title" id="mTitle">—</span><span class="m-time" id="mTime">0:00</span></div>
         <div class="m-only m-tl" id="mTl" role="slider" tabindex="0" aria-label="Position dans le morceau" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         <button class="icon m-only" id="mList" type="button" aria-expanded="false" aria-controls="plPop" aria-label="Voir la playlist" title="Playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h11M4 12h11M4 18h7"></path><path d="M19 8v9"></path><circle cx="17" cy="17.5" r="2" fill="currentColor" stroke="none"></circle></svg></button>
         <div class="track t-only" id="track">
@@ -480,6 +569,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
         <button class="icon" id="soundBtn" type="button" aria-pressed="false" aria-label="Son d'ambiance" title="Son d'ambiance">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"></path><path id="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></svg>
         </button>
+        <button class="icon" id="commandOptions" type="button" aria-label="Outils supplémentaires" aria-controls="commandMore" aria-expanded="false">⋮</button>
       </section>
     </div>
   </div>
@@ -493,6 +583,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   </aside>
 </div>
 
+<script src="scenes.js"></script>
 <script id="oa-app">
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -749,6 +840,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
       slatsEl.parentNode.appendChild(l);
       ladders.push(l);
     }
+    placeSignalStamp();
     focal = { x: W / 2, y: H * .42, r: Math.min(W, H) * .17 };
     slatCache = []; lastBlind = ''; sY = []; sYV = []; sAng = []; sAngV = []; wasHung = [];
   }
@@ -2058,8 +2150,12 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   chips($('seasonChips'), SEASONS.map(s => s.id === 'auto' ? { ...s, label: `Auto (${{ printemps: 'printemps', ete: 'été', automne: 'automne', hiver: 'hiver' }[seasonFromDate(today)]})` } : s),
     () => seasonSel, v => { seasonSel = v; store.set('oa-season', v); buildDay(); buildWeatherAndSeason(); });
 
+  const headerDateFormat = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  let headerDateKey = '';
   function updateDayUI() {
     const p = phaseOf(norm(curMin));
+    const dateNow = new Date(), dateKey = dateNow.toDateString() + ':' + live;
+    if (headerDateKey !== dateKey) { headerDateKey = dateKey; $('headerDate').textContent = headerDateFormat.format(dateNow) + (live ? ' · ' : ' · exploration du jour · '); }
     clockTime.textContent = fmt(curMin);
     clockTime.setAttribute('datetime', fmt(curMin));
     if (phaseBtn.textContent !== p.label) phaseBtn.textContent = p.label;
@@ -2070,7 +2166,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 
 
   /* ───────── Détail dans la capsule ───────── */
-  const dayEl = document.querySelector('.day'), detailEl = $('detail'), dtTitle = $('dtTitle'), dtText = $('dtText'), dtClose = $('dtClose');
+  const dayEl = $('commandCapsule'), detailEl = $('detail'), dtTitle = $('dtTitle'), dtText = $('dtText'), dtClose = $('dtClose');
   let dtTimer = 0;
   const dtLink = $('dtLink');
   function showDetail(title, text, url) {
@@ -2099,6 +2195,11 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   function setMusicMode(on) {
     musicMode = on && trackList().length > 0;
     dayEl.classList.toggle('music-mode', musicMode);
+    $('headerMusic').hidden = !musicMode;
+    $('headerDate').hidden = musicMode;
+    clockTime.hidden = musicMode;
+    $('toolTime').setAttribute('aria-pressed', String(!musicMode));
+    $('toolMusic').setAttribute('aria-pressed', String(musicMode));
     musicBtn.setAttribute('aria-pressed', String(musicMode));
     musicBtn.setAttribute('aria-label', musicMode ? 'Revenir à l’heure' : 'Musique : ouvrir la playlist');
     musicBtn.title = musicMode ? 'Revenir à l’heure' : 'Musique';
@@ -2300,7 +2401,8 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
     hotCache.set(el, key);
     Object.assign(el.style, { left: r.x.toFixed(0) + 'px', top: r.y.toFixed(0) + 'px', width: r.w.toFixed(0) + 'px', height: Math.max(14, r.h).toFixed(0) + 'px' });
   }
-  postitBtn.addEventListener('click', () => { const t = currentTask(); if (t) showDetail(`${t.time} · ${t.title}`, t.detail); });
+  postitBtn.setAttribute('aria-label', 'Post-it : laisser un message privé');
+  postitBtn.addEventListener('click', () => document.dispatchEvent(new CustomEvent('openaime:compose')));
   const hitAt = (x, y) => { for (let i = hits.length - 1; i >= 0; i--) { const q = hits[i]; if (x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h) return q; } return null; };
 
   /* ───────── Application des réglages ───────── */
@@ -2346,7 +2448,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   const rectOf = el => { const r = el.getBoundingClientRect(), s0 = stage.getBoundingClientRect(); return { x: r.left - s0.left, y: r.top - s0.top, w: r.width, h: r.height }; };
   function allRegions() {
     const list = regs.slice();
-    if (S.bar.show && !hud.hidden) list.push({ id: musicMode ? 'music' : 'bar', ...rectOf(document.querySelector('.day')), pri: 8 });
+    if (S.bar.show && !hud.hidden) list.push({ id: musicMode ? 'music' : 'bar', ...rectOf($('commandCapsule')), pri: 8 });
     if (S.bar.show && !hud.hidden && !musicBtn.hidden) list.push({ id: 'music', ...rectOf(musicBtn), pri: 9 });
     list.push({ id: 'signature', x: 0, y: 0, w: W, h: head, pri: 7 });
     const cr = rectOf(cord), hr = rectOf(handle);
@@ -2488,7 +2590,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
     if (key === 'bug.slat') bug.k = null;
     if (key === 'music.duck') syncPlay();
     applySettings();
-    pnStatus.textContent = 'Modifications visibles ici seulement, jusqu’à l’enregistrement.';
+    pnStatus.textContent = artifactApi ? 'Modifications visibles ici seulement, jusqu’à l’enregistrement.' : 'Essai local uniquement : recharger la page rétablit la fenêtre publiée.';
   }
 
   /* — fabrique des contrôles — */
@@ -2717,14 +2819,16 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
     renderPanel(); panel.hidden = false;
     requestAnimationFrame(() => panel.classList.add('open'));
     setBtn.setAttribute('aria-expanded', 'true');
+    $('toolCustomize').setAttribute('aria-expanded', 'true');
     setTimeout(() => { $('pnClose').focus({ preventScroll: true }); stage.scrollLeft = 0; }, 380);
   }
   function closePanel() {
     editMode = false; editSel = null; document.body.classList.remove('editing');
     hoverBox.hidden = true; selBox.hidden = true;
     panel.classList.remove('open'); setBtn.setAttribute('aria-expanded', 'false');
+    $('toolCustomize').setAttribute('aria-expanded', 'false');
     setTimeout(() => { panel.hidden = true; stage.scrollLeft = 0; }, 350);
-    setBtn.focus({ preventScroll: true });
+    $('commandOptions').focus({ preventScroll: true });
   }
   setBtn.addEventListener('click', () => panel.hidden ? openPanel(true) : closePanel());
   $('pnClose').addEventListener('click', closePanel);
@@ -2780,14 +2884,121 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   }
   pnSave.addEventListener('click', saveSettings);
 
-  // le bouton n'apparaît que pour le propriétaire de la page
+  // La barre ouvre les réglages pour tous, sans droit de publication.
+  pnSave.hidden = true;
+  pnStatus.textContent = 'Essai local uniquement : recharger la page rétablit la fenêtre publiée.';
+  $('toolCustomize').addEventListener('click', () => panel.hidden ? openPanel(true) : closePanel());
+  $('toolTime').addEventListener('click', () => {
+    if (!panel.hidden) closePanel();
+    setMusicMode(false);
+    $('timeRange').focus();
+  });
+  $('toolMusic').addEventListener('click', () => {
+    if (!panel.hidden) closePanel();
+    setMusicMode(true);
+    if (musicMode) mPlay.focus();
+    else toast('Aucun morceau dans cette fenêtre.');
+  });
+  const commandMenus = [[$('commandAdd'), $('commandModes')], [$('commandOptions'), $('commandMore')]];
+  function closeCommandMenus() {
+    for (const [button, menu] of commandMenus) { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); }
+  }
+  for (const [button, menu] of commandMenus) {
+    button.addEventListener('click', () => {
+      const open = menu.hidden;
+      closeCommandMenus();
+      if (!panel.hidden) closePanel();
+      if (open) { menu.hidden = false; button.setAttribute('aria-expanded', 'true'); menu.querySelector('button').focus(); }
+    });
+    menu.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.stopPropagation(); closeCommandMenus(); button.focus(); }
+    });
+    menu.addEventListener('click', e => { if (e.target.closest('button')) closeCommandMenus(); });
+  }
+  document.addEventListener('pointerdown', e => {
+    if (!commandMenus.some(([button, menu]) => button.contains(e.target) || menu.contains(e.target))) closeCommandMenus();
+  });
+
+  // Opt-in visual demo; never represents a real document or message.
+  let signalDemoActive = false;
+  const signalStamp = document.createElement('button');
+  signalStamp.type = 'button'; signalStamp.className = 'demo-stamp'; signalStamp.textContent = '▤';
+  signalStamp.setAttribute('aria-label', 'Démonstration : document à vérifier, aucun document réel');
+  function placeSignalStamp() {
+    // build() can run before this demo is initialized.
+    const button = document.getElementById('demoSignal');
+    if (!button || button.getAttribute('aria-pressed') !== 'true') return;
+    const target = slats[Math.min(3, slats.length - 1)];
+    if (target) target.appendChild(signalStamp);
+  }
+  function setSignalDemo(active) {
+    signalDemoActive = active;
+    document.body.classList.toggle('signal-demo', active);
+    $('demoSignal').setAttribute('aria-pressed', String(active));
+    $('demoSignal').textContent = active ? 'Effacer le signal de démonstration' : 'Essayer un signal · démonstration';
+    $('signalStatus').textContent = active ? 'Démo : document à vérifier. Aucun document réel. Le store reste utilisable.' : '';
+    if (active) placeSignalStamp(); else signalStamp.remove();
+  }
+  $('demoSignal').addEventListener('click', () => setSignalDemo(!signalDemoActive));
+  signalStamp.addEventListener('click', () => {
+    showDetail('Document · démonstration', 'Exemple de signal visuel uniquement : aucun document ni échec réel.');
+    setSignalDemo(false);
+    dtClose.focus();
+  });
+
+  // Scene previews share the existing rendering state; only the first preview captures a return point.
+  let scenePrevious = null;
+  const sceneCatalog = $('sceneCatalog');
+  function closeScenes() {
+    sceneCatalog.hidden = true;
+    $('toolScenes').setAttribute('aria-expanded', 'false');
+  }
+  function applySceneState(state) {
+    seasonSel = state.season; weatherSel = state.weather;
+    buildDay(); buildWeatherAndSeason();
+    setLive(state.live);
+    if (!state.live) { targetMin = state.minute; curMin = state.minute; range.value = Math.round(state.minute) % 1440; }
+  }
+  for (const scene of window.OpenAimeScenes) {
+    const button = document.createElement('button'); button.type = 'button';
+    const title = document.createElement('strong'); title.textContent = scene.title;
+    const detail = document.createElement('small'); detail.textContent = scene.description;
+    button.append(title, detail);
+    button.addEventListener('click', () => {
+      if (!scenePrevious) scenePrevious = { season: seasonSel, weather: weatherSel, live, minute: targetMin };
+      seasonSel = scene.season; buildDay();
+      const minute = PHASES.find(phase => phase.id === scene.phase).center;
+      applySceneState({ season: scene.season, weather: scene.weather, live: false, minute });
+      $('sceneStatus').textContent = scene.title + ' · simulation locale';
+      $('sceneRestore').disabled = false;
+    });
+    $('sceneTiles').append(button);
+  }
+  $('toolScenes').addEventListener('click', () => {
+    sceneCatalog.hidden = false;
+    $('toolScenes').setAttribute('aria-expanded', 'true');
+    $('sceneClose').focus();
+  });
+  $('sceneClose').addEventListener('click', () => { closeScenes(); $('commandAdd').focus(); });
+  sceneCatalog.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.stopPropagation(); closeScenes(); $('commandAdd').focus(); }
+  });
+  $('sceneRestore').addEventListener('click', () => {
+    if (!scenePrevious) return;
+    applySceneState(scenePrevious); scenePrevious = null;
+    $('sceneRestore').disabled = true; $('sceneStatus').textContent = 'Ambiance précédente rétablie.';
+  });
+  $('commandAdd').addEventListener('click', closeScenes);
+  $('commandOptions').addEventListener('click', closeScenes);
+
+  // La publication historique reste réservée au propriétaire dans Artifacts.
   (async () => {
     const c = window.claude;
     if (!c || typeof c.use !== 'function') return;
     try {
       const [a, u] = await Promise.all([c.use('artifact'), c.use('user')]);
       const owner = !!(u && typeof u.isOwner === 'function' && await u.isOwner());
-      if (a && owner) { artifactApi = a; setBtn.hidden = false; }
+      if (a && owner) { artifactApi = a; setBtn.hidden = false; pnSave.hidden = false; }
     } catch (e) { /* vue sans réglages */ }
   })();
 
@@ -2836,7 +3047,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
       const startY = e.clientY, startD = dropT, span = railTopFor(1) - railTopFor(0);
       let lx = e.clientX;
       const move = ev => { dropT = clamp(startD + (ev.clientY - startY) / span, 0, 1); if (el === handle) { swingV -= (ev.clientX - lx) * 2.2; lx = ev.clientX; } };
-      const up = () => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+      const up = ev => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
       el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
     });
   }
@@ -2882,7 +3093,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   });
 
   stage.addEventListener('wheel', e => {
-    if (e.target.closest('.capsule-wrap')) return;
+    if (e.target.closest('.capsule-wrap, .capsule-compose')) return;
     e.preventDefault();
     if (e.shiftKey) { tiltBeforeReveal = null; tiltT = clamp(tiltT - e.deltaY / 600, 0, 1); }
     else dropT = clamp(dropT + e.deltaY / 900, 0, 1);
