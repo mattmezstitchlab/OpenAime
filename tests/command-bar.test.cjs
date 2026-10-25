@@ -28,7 +28,7 @@ test('one capsule contains mode and options buttons, no second toolbar',()=>{
  const capsule=html.slice(html.indexOf('<section class="day"'),html.indexOf('</section>',html.indexOf('<section class="day"')));
  assert.ok(capsule.includes('id="commandAdd"'));
  assert.ok(capsule.includes('id="commandOptions"'));
- assert.ok(html.includes("postitBtn.addEventListener('click', () => $('visitorNote').showModal())"));
+ assert.ok(html.includes("new CustomEvent('openaime:compose')"));
 });
 test('header owns reading information and schematic SyncView is removed',()=>{
  assert.ok(!html.includes('id="syncView"'));

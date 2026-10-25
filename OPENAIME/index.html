@@ -417,6 +417,19 @@ body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9
 #commandAdd[aria-expanded=true] span { transform: rotate(45deg); }
 @media(prefers-reduced-motion: reduce) { #commandAdd span { transition: none; } }
 /* La lecture du contexte quitte la capsule, sans ajouter une seconde barre. */
+.capsule-compose { pointer-events: auto; box-sizing: border-box; width: min(680px, calc(100vw - 24px)); max-height: 65dvh; overflow: auto; padding: 14px; border-radius: 22px; color: #26282b; background: #fbfaf7; box-shadow: 0 6px 30px #0003; touch-action: pan-y; user-select: text; }
+.capsule-compose header, .note-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.capsule-compose label { display: block; font-size: 13px; margin: 8px 0; }
+.capsule-compose textarea, .capsule-compose input { box-sizing: border-box; width: 100%; padding: 10px; border: 0; border-radius: 10px; background: #eeeae3; color: #26282b; font: inherit; touch-action: auto; user-select: text; }
+.capsule-compose textarea { resize: vertical; min-height: 64px; max-height: 140px; }
+.capsule-compose button { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 12px; background: #eeeae3; color: inherit; font: inherit; cursor: pointer; }
+#visitorNoteContinue { background: #26282b; color: #fff; }
+.capsule-compose p, #noteCount { font-size: 12px; line-height: 1.4; }
+.capsule-compose :focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
+body.composing .capsule-wrap { display: none; }
+.slat.causal-accent { outline: 2px solid #c5a8d4; outline-offset: -2px; animation: causal-light .8s ease-out; }
+@keyframes causal-light { from { filter: brightness(1.18); } to { filter: brightness(1); } }
+@media(prefers-reduced-motion: reduce) { .slat.causal-accent { animation: none; } }
 .header-context { position: absolute; z-index: 8; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 40%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #26282b; font-size: 13px; text-align: center; pointer-events: auto; }
 #headerMusic { min-width: 0; }
 #mTitle { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
@@ -427,16 +440,6 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
 @media(max-width: 600px) { .header-context { width: 44%; font-size: 11px; flex-wrap: wrap; gap: 0 4px; } .logo { max-width: 26%; overflow: hidden; } .window-guide-toggle { top: 8px; } }
 </style>
 
-<dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
-  <h2 id="visitorNoteTitle">Un mot sur ma fenêtre</h2>
-  <p id="visitorNoteHelp">Ce post-it est privé, il ne sera pas affiché sur le store. Prépare ton message ici, puis confirme tes coordonnées et l’envoi sur AIMEStudio.</p>
-  <label for="visitorNoteText">Ton message (3 000 caractères maximum)</label>
-  <textarea id="visitorNoteText" maxlength="3000" placeholder="Une question, une date de mariage, une idée…"></textarea>
-  <p>Rien n’est envoyé à cette étape. Une demande de réservation ne confirme pas une réservation.</p>
-  <a id="visitorNoteContinue" href="https://aimestudio.vercel.app/contact/openaime/" rel="noreferrer">Continuer sur AIMEStudio</a>
-  <p>Le brouillon accompagne le lien : garde-le privé. Il n’est pas sauvegardé dans ce navigateur.</p>
-  <form method="dialog"><button type="submit">Revenir à la fenêtre</button></form>
-</dialog>
 <script src="visitor-note.js" defer></script>
 <script src="identity.js" defer></script>
 
@@ -495,6 +498,19 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="hud" id="hud">
+    <form id="visitorNote" class="capsule-compose" hidden aria-label="Préparer un message privé">
+      <header><button type="button" id="noteBack" aria-label="Revenir à la fenêtre en conservant le brouillon">←</button><strong>Post-it privé · brouillon</strong></header>
+      <label for="visitorNoteText">Votre message</label>
+      <textarea id="visitorNoteText" maxlength="2400" rows="2" required minlength="20" placeholder="Une question, une idée, une demande…"></textarea>
+      <div class="note-actions"><button type="button" id="noteFields" aria-expanded="false" aria-controls="noteExtras">+ Date et lieu</button><span id="noteCount">0 / 2 400</span></div>
+      <div id="noteExtras" hidden>
+        <label>Date souhaitée <input type="date" id="noteDate"></label>
+        <label>Lieu <input id="notePlace" maxlength="180" autocomplete="off" placeholder="Ville ou lieu de l’événement"></label>
+      </div>
+      <p id="notePrivacy">Rien n’est envoyé ici. L’étape suivante ouvre AIMEStudio pour vérifier vos coordonnées et confirmer l’envoi. Le brouillon accompagne le lien : ne le partagez pas.</p>
+      <p id="noteStatus" role="status"></p>
+      <div class="note-actions"><button type="button" id="noteDiscard">Effacer le brouillon</button><button type="submit" id="visitorNoteContinue">Vérifier dans AIMEStudio →</button></div>
+    </form>
     <div class="capsule-wrap">
       <div class="pop" id="pop" hidden="">
         <div class="row">
@@ -2390,7 +2406,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
     Object.assign(el.style, { left: r.x.toFixed(0) + 'px', top: r.y.toFixed(0) + 'px', width: r.w.toFixed(0) + 'px', height: Math.max(14, r.h).toFixed(0) + 'px' });
   }
   postitBtn.setAttribute('aria-label', 'Post-it : laisser un message privé');
-  postitBtn.addEventListener('click', () => $('visitorNote').showModal());
+  postitBtn.addEventListener('click', () => document.dispatchEvent(new CustomEvent('openaime:compose')));
   const hitAt = (x, y) => { for (let i = hits.length - 1; i >= 0; i--) { const q = hits[i]; if (x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h) return q; } return null; };
 
   /* ───────── Application des réglages ───────── */
@@ -3082,7 +3098,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
   });
 
   stage.addEventListener('wheel', e => {
-    if (e.target.closest('.capsule-wrap')) return;
+    if (e.target.closest('.capsule-wrap, .capsule-compose')) return;
     e.preventDefault();
     if (e.shiftKey) { tiltBeforeReveal = null; tiltT = clamp(tiltT - e.deltaY / 600, 0, 1); }
     else dropT = clamp(dropT + e.deltaY / 900, 0, 1);

@@ -33,7 +33,7 @@ Le choix des services d'authentification et de stockage reste à faire avant leu
 
 ## Post-it privé — premier raccord à AIMEStudio
 
-Le post-it du store ouvre un brouillon dans un dialogue natif, sans sauvegarde locale ni envoi automatique. « Continuer » transmet le texte via le fragment d'un lien vers la page AIMEStudio `/contact/openaime/`, où le visiteur vérifie son message, renseigne ses coordonnées et consent avant l'envoi. Le brouillon accompagne le lien : ne pas partager cette URL. La destination est fixe, jamais fournie par le visiteur. La demande réutilise le système et le destinataire serveur AIME, sans clé dans OpenAime.
+Le post-it du store transforme la capsule en brouillon privé, sans sauvegarde locale ni envoi automatique. « Continuer » transmet le texte via le fragment d'un lien vers la page AIMEStudio `/contact/openaime/`, où le visiteur vérifie son message, renseigne ses coordonnées et consent avant l'envoi. Le brouillon accompagne le lien : ne pas partager cette URL. La destination est fixe, jamais fournie par le visiteur. La demande réutilise le système et le destinataire serveur AIME, sans clé dans OpenAime.
 
 Dépendance de livraison : fusionner et déployer la PR AIMEStudio #151 avant OpenAime. Le domaine public utilise la destination publique ; seule l'adresse de preview de cette branche est reliée à la preview AIME correspondante pour les essais. Aucun vrai envoi ni destinataire confirmé dans ce lot. La configuration Preview ne dispose pas de CONTACT_TO/CONTACT_FROM lors de la préparation : ne pas envoyer de données personnelles pour tester. Les tests d'interface simulent la réponse de l'API. La buée/dessin, les post-its publics et l'ouverture de l'éditeur restent à implémenter.
 
@@ -61,4 +61,10 @@ La maquette SyncView et ses contrôles sont retirés. Le nom conserve un menu si
 
 La perle multicolore de 32 px remplace en permanence l'ancienne poignée. Elle reste attachée au bout du cordon. Tirer conserve le geste du store ; un clic sans déplacement ou Entrée/Espace ouvre les outils ⋮ existants. Les flèches/Home/End conservent le réglage de hauteur. Aucun choix de rôles/couleurs officielles n'est simulé.
 
-Restent à construire : saisie de message dans la capsule (le dialogue existant reste), polaroid/médias, menus de participations réelles AIME, frise calendrier et migration complète des réglages détaillés.
+Restent à construire : polaroid/médias, menus de participations réelles AIME, frise calendrier et migration complète des réglages détaillés.
+
+## Parcours message intégré
+
+Le post-it ouvre la saisie directement à la place des commandes du bas. Retour/Échap conserve le brouillon dans la page, sans stockage durable ; rechargement ou fermeture peuvent le perdre après avertissement du navigateur. Date et lieu sont facultatifs. Effacer demande confirmation si le brouillon a changé. Le bouton « Vérifier dans AIMEStudio » est un passage explicite vers les coordonnées et le consentement, pas un envoi confirmé. L'accent sur la lamelle indique le contexte de saisie, pas un succès serveur.
+
+État complet et raccords restant à réaliser : [docs/DELIVERY.md](docs/DELIVERY.md).
