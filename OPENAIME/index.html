@@ -390,6 +390,14 @@ body.editing .stage { margin-right: 0; }
 
 @media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
 
+.scene-catalog { max-height: 65dvh; overflow: auto; touch-action: pan-y; }
+.scene-catalog header { display: flex; justify-content: space-between; align-items: center; }
+.scene-catalog p { font-size: 12px; line-height: 1.5; }
+.scene-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.scene-catalog button { min-height: 44px; border: 0; border-radius: 12px; padding: 10px; background: #fbfaf7; color: #26282b; font: inherit; cursor: pointer; }
+.scene-tiles button { text-align: left; background: linear-gradient(135deg,#d7e9ec,#f6dbb9); }
+.scene-tiles small { display: block; margin-top: 6px; }
+.scene-catalog :focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
 .logo { pointer-events: auto; cursor: pointer; }
 .identity-menu { position: fixed; top: 68px; left: 14px; z-index: 20; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; border-radius: 16px; padding: 14px; background: #fbfaf7; color: #26282b; box-shadow: 0 8px 30px #0003; }
 .identity-menu button { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
@@ -498,12 +506,20 @@ body.syncing .t-only { display: initial !important; }
         <strong>Lecture de la capsule</strong>
         <button type="button" id="toolTime" aria-pressed="true">◷ Temps et phases</button>
         <button type="button" id="toolMusic" aria-pressed="false">♫ Musique</button>
+        <button type="button" id="toolScenes" aria-controls="sceneCatalog" aria-expanded="false">▦ Scènes</button>
         <p>Médias, Personnes et Jour J : à venir.</p>
       </div>
       <div class="pop command-menu" id="commandMore" hidden>
         <strong>Outils de la fenêtre</strong>
         <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">Personnaliser ma vue</button>
         <p>Essai temporaire, sans modifier la fenêtre publiée.</p>
+      </div>
+      <div class="pop scene-catalog" id="sceneCatalog" hidden aria-label="Catalogue de scènes">
+        <header><strong>Scènes · aperçu local</strong><button type="button" id="sceneClose" aria-label="Fermer le catalogue">×</button></header>
+        <p>Ambiances simulées, sans effet sur les réservations ni la météo réelle. Aucun son n’est démarré.</p>
+        <div id="sceneTiles" class="scene-tiles"></div>
+        <p id="sceneStatus" role="status"></p>
+        <button type="button" id="sceneRestore" disabled>Rétablir l’ambiance précédente</button>
       </div>
       <section class="day" aria-label="Commandes de la fenêtre">
         <div id="syncControls" class="sync-controls" hidden>
@@ -552,6 +568,7 @@ body.syncing .t-only { display: initial !important; }
   </aside>
 </div>
 
+<script src="scenes.js"></script>
 <script id="oa-app">
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2878,6 +2895,51 @@ body.syncing .t-only { display: initial !important; }
   document.addEventListener('pointerdown', e => {
     if (!commandMenus.some(([button, menu]) => button.contains(e.target) || menu.contains(e.target))) closeCommandMenus();
   });
+
+  // Scene previews share the existing rendering state; only the first preview captures a return point.
+  let scenePrevious = null;
+  const sceneCatalog = $('sceneCatalog');
+  function closeScenes() {
+    sceneCatalog.hidden = true;
+    $('toolScenes').setAttribute('aria-expanded', 'false');
+  }
+  function applySceneState(state) {
+    seasonSel = state.season; weatherSel = state.weather;
+    buildDay(); buildWeatherAndSeason();
+    setLive(state.live);
+    if (!state.live) { targetMin = state.minute; curMin = state.minute; range.value = Math.round(state.minute) % 1440; }
+  }
+  for (const scene of window.OpenAimeScenes) {
+    const button = document.createElement('button'); button.type = 'button';
+    const title = document.createElement('strong'); title.textContent = scene.title;
+    const detail = document.createElement('small'); detail.textContent = scene.description;
+    button.append(title, detail);
+    button.addEventListener('click', () => {
+      if (!scenePrevious) scenePrevious = { season: seasonSel, weather: weatherSel, live, minute: targetMin };
+      seasonSel = scene.season; buildDay();
+      const minute = PHASES.find(phase => phase.id === scene.phase).center;
+      applySceneState({ season: scene.season, weather: scene.weather, live: false, minute });
+      $('sceneStatus').textContent = scene.title + ' · simulation locale';
+      $('sceneRestore').disabled = false;
+    });
+    $('sceneTiles').append(button);
+  }
+  $('toolScenes').addEventListener('click', () => {
+    sceneCatalog.hidden = false;
+    $('toolScenes').setAttribute('aria-expanded', 'true');
+    $('sceneClose').focus();
+  });
+  $('sceneClose').addEventListener('click', () => { closeScenes(); $('commandAdd').focus(); });
+  sceneCatalog.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.stopPropagation(); closeScenes(); $('commandAdd').focus(); }
+  });
+  $('sceneRestore').addEventListener('click', () => {
+    if (!scenePrevious) return;
+    applySceneState(scenePrevious); scenePrevious = null;
+    $('sceneRestore').disabled = true; $('sceneStatus').textContent = 'Ambiance précédente rétablie.';
+  });
+  $('commandAdd').addEventListener('click', closeScenes);
+  $('commandOptions').addEventListener('click', closeScenes);
 
   // La publication historique reste réservée au propriétaire dans Artifacts.
   (async () => {
