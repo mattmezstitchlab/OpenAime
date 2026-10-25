@@ -378,7 +378,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 .visitor-note :focus-visible, .visitor-note-toggle:focus-visible { outline: 3px solid #276a98; outline-offset: 3px; }
 
 .command-menu { display: grid; gap: 8px; max-height: 45dvh; overflow: auto; }
-.command-menu button { min-height: 44px; padding: 10px 14px; border: 1px solid #aaa; border-radius: 12px; background: #fbfaf7; color: #26282b; font: inherit; text-align: left; cursor: pointer; }
+.command-menu button { min-height: 44px; padding: 10px 14px; border: 0; border-radius: 12px; background: #fbfaf7; color: #26282b; font: inherit; text-align: left; cursor: pointer; }
 .command-menu button[aria-pressed=true] { background: #26282b; color: white; }
 .command-menu p { margin: 0; font-size: 12px; }
 .command-menu :focus-visible, #commandAdd:focus-visible, #commandOptions:focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
@@ -389,6 +389,24 @@ body.editing .stage { margin-right: 0; }
 .pn-body { overscroll-behavior: contain; touch-action: pan-y; }
 
 @media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
+
+.logo { pointer-events: auto; cursor: pointer; }
+.identity-menu { position: fixed; top: 68px; left: 14px; z-index: 20; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; border-radius: 16px; padding: 14px; background: #fbfaf7; color: #26282b; box-shadow: 0 8px 30px #0003; }
+.identity-menu button { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.identity-menu p { font-size: 12px; line-height: 1.5; }
+.sync-view { position: fixed; inset: 70px 14px 110px; z-index: 6; background: #28201b; border: 8px solid #8b6547; border-radius: 8px; overflow: auto; touch-action: pan-y; }
+.sync-notice { margin: 0; padding: 8px; background: #fbfaf7; color: #26282b; font-size: 12px; }
+.sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px; min-height: calc(100% - 64px); background: repeating-linear-gradient(95deg,#795337,#95704d 6px,#876344 9px); }
+.sync-grid.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sync-pane { position: relative; min-height: 160px; background: linear-gradient(var(--sky-top), var(--sky-bot)); overflow: hidden; box-shadow: inset 0 0 12px #0005; }
+.sync-pane::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 34px, #dad8d0 35px 48px, #92918e 49px 51px); opacity: .65; }
+.sync-pane h2, .sync-pane p { position: relative; display: table; margin: 12px; padding: 6px 10px; border-radius: 8px; background: #fbfaf7; color: #26282b; font-size: 14px; }
+.sync-pane p { font-size: 12px; }
+.sync-controls { display: flex; align-items: center; gap: 6px; }
+body.syncing #blind, body.syncing #space, body.syncing #rays, body.syncing #infoStars, body.syncing .hotspot { visibility: hidden; }
+body.syncing .m-only, body.syncing #musicBtn, body.syncing #ambBtn, body.syncing #soundBtn { display: none !important; }
+body.syncing .t-only { display: initial !important; }
+@media(max-width: 600px) { .sync-grid, .sync-grid.six { grid-template-columns: 1fr; } .sync-controls span { display: none; } }
 </style>
 
 <dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
@@ -402,6 +420,7 @@ body.editing .stage { margin-right: 0; }
   <form method="dialog"><button type="submit">Revenir à la fenêtre</button></form>
 </dialog>
 <script src="visitor-note.js" defer></script>
+<script src="syncview.js" defer></script>
 
 <button class="window-guide-toggle" id="guideToggle" type="button" aria-controls="windowGuide" aria-expanded="false">Découvrir la fenêtre</button>
 <aside class="window-guide" id="windowGuide" aria-labelledby="guideTitle" hidden>
@@ -442,7 +461,16 @@ body.editing .stage { margin-right: 0; }
   <div id="infoStars"></div>
   <button class="hotspot" id="postitBtn" type="button" aria-label="Voir le détail de la tâche du post-it" hidden=""></button>
 
-  <span class="logo" id="logo">Matt Mez</span>
+  <button class="logo" id="logo" type="button" aria-expanded="false" aria-controls="identityMenu">Matt Mez</button>
+  <div id="identityMenu" class="identity-menu" hidden>
+    <button type="button" id="identityHome">Ma fenêtre</button>
+    <button type="button" id="identitySync">Comparer les vues · SyncView</button>
+    <p>Maquette de disposition. Les droits AIMEStudio ne sont pas encore raccordés.</p>
+  </div>
+  <section id="syncView" class="sync-view" aria-label="SyncView — maquette de comparaison" hidden>
+    <p class="sync-notice">Maquette visuelle · mêmes données publiques dans chaque carreau · aucune permission vérifiée</p>
+    <div id="syncGrid" class="sync-grid"></div>
+  </section>
   <button class="setbtn" id="setBtn" type="button" aria-label="Réglages de la fenêtre" aria-controls="panel" aria-expanded="false" title="Réglages" hidden="">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
   </button>
@@ -478,6 +506,12 @@ body.editing .stage { margin-right: 0; }
         <p>Essai temporaire, sans modifier la fenêtre publiée.</p>
       </div>
       <section class="day" aria-label="Commandes de la fenêtre">
+        <div id="syncControls" class="sync-controls" hidden>
+          <button class="icon" id="syncExit" type="button" aria-label="Quitter SyncView">←</button>
+          <span>SyncView · maquette</span>
+          <button class="icon" id="syncFour" type="button" aria-label="Quatre carreaux" aria-pressed="true">4</button>
+          <button class="icon" id="syncSix" type="button" aria-label="Six carreaux" aria-pressed="false">6</button>
+        </div>
         <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false">+</button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
         <time class="t-only" id="clockTime">--:--</time>

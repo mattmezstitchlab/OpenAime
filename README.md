@@ -44,3 +44,9 @@ La capsule d'origine accueille `+` (lectures Temps/Musique) et `⋮` (outils). A
 Temps/Musique réutilisent le lecteur et la ligne du temps d'origine ; changer de lecture ne lance pas la musique. Les menus se ferment au choix, au clic extérieur et avec Échap ; le focus revient à leur bouton avec Échap. Le menu ⋮ donne accès aux réglages locaux dans une feuille compacte, limitée en hauteur au-dessus de la capsule. La migration des contrôles détaillés en réglages directement dans la capsule reste à faire. Les essais disparaissent au rechargement ; seul le propriétaire historique dans Artifacts peut publier.
 
 Vérifier : ouverture +/⋮, Temps/Musique, fermeture des menus, réglages, focus et activation du vrai post-it au clavier ou au toucher. Aucun calendrier futur, disponibilité officielle ni filtre multi-calques n'est ajouté dans ce lot.
+
+## SyncView — maquette de disposition, pas un audit des droits
+
+Le nom ouvre un menu personnel, puis « Comparer les vues » affiche quatre ou six carreaux séparés par des montants bois. Les fonds suivent les couleurs de la scène via les mêmes variables CSS. Sur mobile les carreaux se parcourent verticalement. Les commandes 4/6 et retour sont dans la capsule existante, sans deuxième barre.
+
+**Limite explicite :** les carreaux sont des représentations CSS, pas des copies complètes de la scène ni des sessions d'utilisateurs. Les noms Public/Contact/etc. sont des scénarios proposés et ne prouvent aucun rôle existant. Aucun contenu privé, aucune API de permissions et aucune comparaison réelle AIMEStudio ne sont utilisés. Raccorder les vues serveur filtrées, synchroniser les gestes des stores et expliquer les règles sont des étapes ultérieures. L'interface indique cette limite dans chaque carreau et dans son bandeau.
