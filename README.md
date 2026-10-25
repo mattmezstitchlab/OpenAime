@@ -30,3 +30,9 @@ Chaque personne pourra avoir sa fenêtre publique. Les connexions seront accept�
 5. **Avant ouverture des inscriptions** : suppression de compte et de données, signalement/modération, anti-abus, tests d'isolation entre utilisateurs et information sur la confidentialité.
 
 Le choix des services d'authentification et de stockage reste à faire avant leur intégration. Pas de faux comptes, de connexions simulées ou d'édition publique non protégée. Messagerie et fil d'actualité ne font pas partie de la première version.
+
+## Post-it privé — premier raccord à AIMEStudio
+
+Le bouton « Déposer un post-it » ouvre un brouillon dans un dialogue natif, sans sauvegarde locale ni envoi automatique. « Continuer » transmet le texte via le fragment d'un lien vers la page AIMEStudio `/contact/openaime/`, où le visiteur vérifie son message, renseigne ses coordonnées et consent avant l'envoi. Le brouillon accompagne le lien : ne pas partager cette URL. La destination est fixe, jamais fournie par le visiteur. La demande réutilise le système et le destinataire serveur AIME, sans clé dans OpenAime.
+
+Dépendance de livraison : fusionner et déployer la PR AIMEStudio #151 avant OpenAime. Le domaine public utilise la destination publique ; seule l'adresse de preview de cette branche est reliée à la preview AIME correspondante pour les essais. Aucun vrai envoi ni destinataire confirmé dans ce lot. La configuration Preview ne dispose pas de CONTACT_TO/CONTACT_FROM lors de la préparation : ne pas envoyer de données personnelles pour tester. Les tests d'interface simulent la réponse de l'API. La buée/dessin, les post-its publics et l'ouverture de l'éditeur restent à implémenter.

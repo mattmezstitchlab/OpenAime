@@ -366,7 +366,30 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 .window-guide button { min-height: 44px; padding: 10px 16px; border: 1px solid #26282b; border-radius: 24px; color: #fafaf6; background: #26282b; font: inherit; cursor: pointer; }
 @media (max-width: 560px) { .window-guide-toggle { width: 44px; height: 44px; padding: 0; font-size: 0; } .window-guide-toggle::after { content: "?"; font-size: 20px; } }
 .window-guide-toggle:focus-visible, .window-guide :focus-visible { outline: 3px solid #276a98; outline-offset: 4px; }
+
+.visitor-note-toggle { position: fixed; z-index: 9; left: 14px; top: calc(76px + env(safe-area-inset-top)); min-height: 44px; padding: 10px 14px; border: 1px solid #9a843c; background: #fae880; color: #302c20; border-radius: 4px; font: inherit; cursor: pointer; }
+.visitor-note { width: min(380px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); box-sizing: border-box; overflow: auto; padding: 24px; border: 0; border-radius: 6px; background: #fae880; color: #302c20; touch-action: pan-y; user-select: text; }
+.visitor-note::backdrop { background: #0006; }
+.visitor-note h2 { margin: 0 0 12px; font-size: 22px; }
+.visitor-note p { line-height: 1.5; }
+.visitor-note textarea { display: block; box-sizing: border-box; width: 100%; min-height: 140px; margin: 10px 0; padding: 10px; background: #fff9d8; color: #302c20; font: inherit; border: 1px solid #9a843c; touch-action: auto; user-select: text; }
+.visitor-note a, .visitor-note button { display: inline-block; min-height: 44px; box-sizing: border-box; padding: 12px; margin: 6px 0; font: inherit; }
+.visitor-note a { background: #302c20; color: #fff9d8; border-radius: 4px; }
+.visitor-note :focus-visible, .visitor-note-toggle:focus-visible { outline: 3px solid #276a98; outline-offset: 3px; }
 </style>
+
+<button class="visitor-note-toggle" id="visitorNoteToggle" type="button" aria-haspopup="dialog">Déposer un post-it</button>
+<dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
+  <h2 id="visitorNoteTitle">Un mot sur ma fenêtre</h2>
+  <p id="visitorNoteHelp">Ce post-it est privé, il ne sera pas affiché sur le store. Prépare ton message ici, puis confirme tes coordonnées et l’envoi sur AIMEStudio.</p>
+  <label for="visitorNoteText">Ton message (3 000 caractères maximum)</label>
+  <textarea id="visitorNoteText" maxlength="3000" placeholder="Une question, une date de mariage, une idée…"></textarea>
+  <p>Rien n’est envoyé à cette étape. Une demande de réservation ne confirme pas une réservation.</p>
+  <a id="visitorNoteContinue" href="https://aimestudio.vercel.app/contact/openaime/" rel="noreferrer">Continuer sur AIMEStudio</a>
+  <p>Le brouillon accompagne le lien : garde-le privé. Il n’est pas sauvegardé dans ce navigateur.</p>
+  <form method="dialog"><button type="submit">Revenir à la fenêtre</button></form>
+</dialog>
+<script src="visitor-note.js" defer></script>
 
 <button class="window-guide-toggle" id="guideToggle" type="button" aria-controls="windowGuide" aria-expanded="false">Découvrir la fenêtre</button>
 <aside class="window-guide" id="windowGuide" aria-labelledby="guideTitle" hidden>
