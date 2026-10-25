@@ -409,22 +409,15 @@ body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9
 .identity-menu { position: fixed; top: 68px; left: 14px; z-index: 20; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; border-radius: 16px; padding: 14px; background: #fbfaf7; color: #26282b; box-shadow: 0 8px 30px #0003; }
 .identity-menu button { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
 .identity-menu p { font-size: 12px; line-height: 1.5; }
-.sync-view { position: fixed; inset: 70px 14px 110px; z-index: 6; background: #28201b; border: 8px solid #8b6547; border-radius: 8px; overflow: auto; touch-action: pan-y; }
-.sync-notice { margin: 0; padding: 8px; background: #fbfaf7; color: #26282b; font-size: 12px; }
-.sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px; min-height: calc(100% - 64px); background: repeating-linear-gradient(95deg,#795337,#95704d 6px,#876344 9px); }
-.sync-grid.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.sync-pane { position: relative; min-height: 160px; background: linear-gradient(var(--sky-top), var(--sky-bot)); overflow: hidden; box-shadow: inset 0 0 12px #0005; }
-.sync-pane::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 34px, #dad8d0 35px 48px, #92918e 49px 51px); opacity: .65; height: var(--sync-drop, 86%); bottom: auto; background: repeating-linear-gradient(transparent 0 calc(30px - var(--sync-slat, 8px)), #dad8d0 calc(30px - var(--sync-slat, 8px)) 29px, #92918e 30px); }
-.sync-pane h2, .sync-pane p { position: relative; display: table; margin: 12px; padding: 6px 10px; border-radius: 8px; background: #fbfaf7; color: #26282b; font-size: 14px; }
-.sync-pane p { font-size: 12px; }
-.sync-adjust { display: flex; flex-wrap: wrap; gap: 12px; padding: 8px; background: #fbfaf7; color: #26282b; }
-.sync-adjust label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.sync-adjust input { min-height: 32px; }
-.sync-controls { display: flex; align-items: center; gap: 6px; }
-body.syncing #blind, body.syncing #space, body.syncing #rays, body.syncing #infoStars, body.syncing .hotspot { visibility: hidden; }
-body.syncing .m-only, body.syncing #musicBtn, body.syncing #ambBtn, body.syncing #soundBtn { display: none !important; }
-body.syncing .t-only { display: initial !important; }
-@media(max-width: 600px) { .sync-grid, .sync-grid.six { grid-template-columns: 1fr; } .sync-controls span { display: none; } }
+/* La lecture du contexte quitte la capsule, sans ajouter une seconde barre. */
+.header-context { position: absolute; z-index: 8; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 40%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #26282b; font-size: 13px; text-align: center; pointer-events: auto; }
+#headerMusic { min-width: 0; }
+#mTitle { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
+#mTime { font-size: 11px; }
+.handle::before { display: none; }
+.handle span { display: block; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #fff9, transparent 45%), conic-gradient(#db829e,#edc77c,#91c9a6,#8fbce0,#b299d7,#db829e); border: 1px solid #fff9; box-shadow: 0 2px 5px #0005; filter: none; }
+body.signal-demo .handle span { width: 32px; height: 32px; }
+@media(max-width: 600px) { .header-context { width: 44%; font-size: 11px; flex-wrap: wrap; gap: 0 4px; } .logo { max-width: 26%; overflow: hidden; } .window-guide-toggle { top: 8px; } }
 </style>
 
 <dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
@@ -438,7 +431,7 @@ body.syncing .t-only { display: initial !important; }
   <form method="dialog"><button type="submit">Revenir à la fenêtre</button></form>
 </dialog>
 <script src="visitor-note.js" defer></script>
-<script src="syncview.js" defer></script>
+<script src="identity.js" defer></script>
 
 <button class="window-guide-toggle" id="guideToggle" type="button" aria-controls="windowGuide" aria-expanded="false">Découvrir la fenêtre</button>
 <aside class="window-guide" id="windowGuide" aria-labelledby="guideTitle" hidden>
@@ -480,19 +473,14 @@ body.syncing .t-only { display: initial !important; }
   <button class="hotspot" id="postitBtn" type="button" aria-label="Voir le détail de la tâche du post-it" hidden=""></button>
 
   <button class="logo" id="logo" type="button" aria-expanded="false" aria-controls="identityMenu">Matt Mez</button>
+  <div class="header-context" id="headerContext">
+    <span id="headerDate"></span><time id="clockTime">--:--</time>
+    <span id="headerMusic" hidden><span id="mTitle">—</span><small id="mTime">0:00</small></span>
+  </div>
   <div id="identityMenu" class="identity-menu" hidden>
     <button type="button" id="identityHome">Ma fenêtre</button>
-    <button type="button" id="identitySync">Comparer les vues · SyncView</button>
-    <p>Maquette de disposition. Les droits AIMEStudio ne sont pas encore raccordés.</p>
+    <p>Une seule fenêtre. Personnalisation temporaire, sans publication.</p>
   </div>
-  <section id="syncView" class="sync-view" aria-label="SyncView — maquette de comparaison" hidden>
-    <p class="sync-notice">Maquette visuelle · mêmes données publiques dans chaque carreau · aucune permission vérifiée</p>
-    <div class="sync-adjust" aria-label="Stores synchronisés">
-      <label>Hauteur <input id="syncHeight" type="range" min="0" max="100" value="86"></label>
-      <label>Lames <input id="syncAngle" type="range" min="0" max="100" value="74"></label>
-    </div>
-    <div id="syncGrid" class="sync-grid"></div>
-  </section>
   <button class="setbtn" id="setBtn" type="button" aria-label="Réglages de la fenêtre" aria-controls="panel" aria-expanded="false" title="Réglages" hidden="">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
   </button>
@@ -538,22 +526,14 @@ body.syncing .t-only { display: initial !important; }
         <button type="button" id="sceneRestore" disabled>Rétablir l’ambiance précédente</button>
       </div>
       <section class="day" aria-label="Commandes de la fenêtre">
-        <div id="syncControls" class="sync-controls" hidden>
-          <button class="icon" id="syncExit" type="button" aria-label="Quitter SyncView">←</button>
-          <span>SyncView · maquette</span>
-          <button class="icon" id="syncFour" type="button" aria-label="Quatre carreaux" aria-pressed="true">4</button>
-          <button class="icon" id="syncSix" type="button" aria-label="Six carreaux" aria-pressed="false">6</button>
-        </div>
         <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false">+</button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
-        <time class="t-only" id="clockTime">--:--</time>
         <button class="phase-btn t-only" id="phaseBtn" type="button" title="Phase suivante">…</button>
         <div class="detail" id="detail" aria-live="polite" hidden=""><b id="dtTitle"></b><span id="dtText"></span><a id="dtLink" target="_blank" rel="noopener" hidden=""></a></div>
         <button class="icon" id="dtClose" type="button" aria-label="Fermer le détail" hidden="">×</button>
         <button class="icon m-only" id="mPrev" type="button" aria-label="Morceau précédent" title="Précédent"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-9-6z"></path><rect x="6" y="6" width="2" height="12" rx="1"></rect></svg></button>
         <button class="icon m-only m-play" id="mPlay" type="button" aria-label="Lecture" title="Lecture"><svg viewBox="0 0 24 24" fill="currentColor"><path class="i-play" d="M8 5.5v13l10.5-6.5z"></path><g class="i-pause"><rect x="7" y="5.5" width="3.4" height="13" rx="1"></rect><rect x="13.6" y="5.5" width="3.4" height="13" rx="1"></rect></g></svg></button>
         <button class="icon m-only" id="mNext" type="button" aria-label="Morceau suivant" title="Suivant"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6v12l9-6z"></path><rect x="16" y="6" width="2" height="12" rx="1"></rect></svg></button>
-        <div class="m-only m-info"><span class="m-title" id="mTitle">—</span><span class="m-time" id="mTime">0:00</span></div>
         <div class="m-only m-tl" id="mTl" role="slider" tabindex="0" aria-label="Position dans le morceau" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         <button class="icon m-only" id="mList" type="button" aria-expanded="false" aria-controls="plPop" aria-label="Voir la playlist" title="Playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h11M4 12h11M4 18h7"></path><path d="M19 8v9"></path><circle cx="17" cy="17.5" r="2" fill="currentColor" stroke="none"></circle></svg></button>
         <div class="track t-only" id="track">
@@ -939,19 +919,11 @@ body.syncing .t-only { display: initial !important; }
     prevDrop = drop; prevTilt = tilt;
 
     const dp = Math.round(drop * 100), deg = Math.round(userAngle);
-    root.style.setProperty('--sync-drop', dp + '%');
-    root.style.setProperty('--sync-slat', Math.max(2, Math.round(14 * (1 - tilt))) + 'px');
     handle.setAttribute('aria-valuenow', dp);
     handle.setAttribute('aria-valuetext', `store descendu à ${dp} %`);
     wand.setAttribute('aria-valuenow', Math.round(tilt * 100));
     wand.setAttribute('aria-valuetext', `lames ouvertes à ${deg} degrés`);
   }
-
-  document.addEventListener('openaime:blind-preview', e => {
-    const { height, angle } = e.detail || {};
-    if (Number.isFinite(height)) dropT = clamp(height / 100, 0, 1);
-    if (Number.isFinite(angle)) tiltT = clamp(angle / 100, 0, 1);
-  });
 
   /* ───────── Toile du ciel ───────── */
   const back = $('back'), front = $('front'), glass = $('glass'), raysCv = $('rays');
@@ -2159,8 +2131,12 @@ body.syncing .t-only { display: initial !important; }
   chips($('seasonChips'), SEASONS.map(s => s.id === 'auto' ? { ...s, label: `Auto (${{ printemps: 'printemps', ete: 'été', automne: 'automne', hiver: 'hiver' }[seasonFromDate(today)]})` } : s),
     () => seasonSel, v => { seasonSel = v; store.set('oa-season', v); buildDay(); buildWeatherAndSeason(); });
 
+  const headerDateFormat = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  let headerDateKey = '';
   function updateDayUI() {
     const p = phaseOf(norm(curMin));
+    const dateNow = new Date(), dateKey = dateNow.toDateString() + ':' + live;
+    if (headerDateKey !== dateKey) { headerDateKey = dateKey; $('headerDate').textContent = headerDateFormat.format(dateNow) + (live ? ' · ' : ' · exploration du jour · '); }
     clockTime.textContent = fmt(curMin);
     clockTime.setAttribute('datetime', fmt(curMin));
     if (phaseBtn.textContent !== p.label) phaseBtn.textContent = p.label;
@@ -2200,6 +2176,9 @@ body.syncing .t-only { display: initial !important; }
   function setMusicMode(on) {
     musicMode = on && trackList().length > 0;
     dayEl.classList.toggle('music-mode', musicMode);
+    $('headerMusic').hidden = !musicMode;
+    $('headerDate').hidden = musicMode;
+    clockTime.hidden = musicMode;
     $('toolTime').setAttribute('aria-pressed', String(!musicMode));
     $('toolMusic').setAttribute('aria-pressed', String(musicMode));
     musicBtn.setAttribute('aria-pressed', String(musicMode));
@@ -3047,9 +3026,9 @@ body.syncing .t-only { display: initial !important; }
       e.preventDefault();
       el.setPointerCapture(e.pointerId);
       const startY = e.clientY, startD = dropT, span = railTopFor(1) - railTopFor(0);
-      let lx = e.clientX;
-      const move = ev => { dropT = clamp(startD + (ev.clientY - startY) / span, 0, 1); if (el === handle) { swingV -= (ev.clientX - lx) * 2.2; lx = ev.clientX; } };
-      const up = () => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+      let lx = e.clientX, moved = false;
+      const move = ev => { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - startY) > 5) moved = true; dropT = clamp(startD + (ev.clientY - startY) / span, 0, 1); if (el === handle) { swingV -= (ev.clientX - lx) * 2.2; lx = ev.clientX; } };
+      const up = ev => { if (el === handle && !moved && ev.type === 'pointerup') $('commandOptions').click(); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
       el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
     });
   }
@@ -3076,6 +3055,7 @@ body.syncing .t-only { display: initial !important; }
   });
 
   handle.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('commandOptions').click(); return; }
     const step = e.shiftKey ? 0.25 : 0.06;
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') dropT = clamp(dropT + step, 0, 1);
     else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') dropT = clamp(dropT - step, 0, 1);

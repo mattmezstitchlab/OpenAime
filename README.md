@@ -45,22 +45,20 @@ Temps/Musique réutilisent le lecteur et la ligne du temps d'origine ; changer d
 
 Vérifier : ouverture +/⋮, Temps/Musique, fermeture des menus, réglages, focus et activation du vrai post-it au clavier ou au toucher. Aucun calendrier futur, disponibilité officielle ni filtre multi-calques n'est ajouté dans ce lot.
 
-## SyncView — maquette de disposition, pas un audit des droits
-
-Le nom ouvre un menu personnel, puis « Comparer les vues » affiche quatre ou six carreaux séparés par des montants bois. Les fonds suivent les couleurs de la scène via les mêmes variables CSS. Sur mobile les carreaux se parcourent verticalement. Les commandes 4/6 et retour sont dans la capsule existante, sans deuxième barre.
-
-**Limite explicite :** les carreaux sont des représentations CSS, pas des copies complètes de la scène ni des sessions d'utilisateurs. Les noms Public/Contact/etc. sont des scénarios proposés et ne prouvent aucun rôle existant. Aucun contenu privé, aucune API de permissions et aucune comparaison réelle AIMEStudio ne sont utilisés. Raccorder les vues serveur filtrées, synchroniser les gestes des stores et expliquer les règles sont des étapes ultérieures. L'interface indique cette limite dans chaque carreau et dans son bandeau.
-
 ## Catalogue de scènes
 
 Capsule → + → Scènes : six ambiances manuelles appliquées à la scène existante, avec retour à l'ambiance précédente. Ce sont des simulations locales, pas des prévisions météo ni des événements programmés. Contrat, inventaire et étapes futures : [docs/SCENES.md](docs/SCENES.md).
-
-### Store commun dans SyncView
-
-Les curseurs Hauteur/Lames de la maquette pilotent le même état de store que la scène principale. La molette sur la scène conserve son comportement, et les carreaux suivent la hauteur/orientation via des variables CSS communes. Sortir de SyncView conserve la position choisie. Les carreaux restent des schémas CSS sans données par rôle ; ce raccord ne constitue pas une synchronisation de sessions ou de permissions.
 
 ## Signaux sensibles — démonstration volontaire
 
 ⋮ → « Essayer un signal · démonstration » affiche un timbre document sur une lamelle et colore la poignée-perle. Le timbre arrive avec une courte animation de décollement et la perle oscille deux fois, jamais en boucle. En mouvements réduits, les animations sont supprimées. Toucher le timbre explique qu'il ne correspond à aucun document réel, retire le signal et place le focus sur la fermeture du détail. On peut également effacer le signal depuis ⋮.
 
 Aucun document, notification, rôle ou couleur AIME officielle n'est raccordé : la teinte de démo n'encode aucune permission. Le store reste pilotable ; aucun nœud ne bloque sa mécanique. Les futurs signaux devront être alimentés par des états serveur explicites et accompagnés d'un texte, avec permissions et possibilité de les retrouver dans la capsule.
+
+## Fenêtre principale recentrée
+
+La maquette SyncView et ses contrôles sont retirés. Le nom conserve un menu simple sans simulation de rôle. Date du jour et heure (ou titre/temps musical) sont centrés dans le bandeau supérieur, hors de la capsule. Le titre long est tronqué et reste disponible via son attribut title ; pas encore de défilement radio. Les heures explorées restent celles du jour, sans calendrier futur.
+
+La perle multicolore de 32 px remplace en permanence l'ancienne poignée. Elle reste attachée au bout du cordon. Tirer conserve le geste du store ; un clic sans déplacement ou Entrée/Espace ouvre les outils ⋮ existants. Les flèches/Home/End conservent le réglage de hauteur. Aucun choix de rôles/couleurs officielles n'est simulé.
+
+Restent à construire : saisie de message dans la capsule (le dialogue existant reste), polaroid/médias, menus de participations réelles AIME, frise calendrier et migration complète des réglages détaillés.

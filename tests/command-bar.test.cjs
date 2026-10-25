@@ -30,3 +30,10 @@ test('one capsule contains mode and options buttons, no second toolbar',()=>{
  assert.ok(capsule.includes('id="commandOptions"'));
  assert.ok(html.includes("postitBtn.addEventListener('click', () => $('visitorNote').showModal())"));
 });
+test('header owns reading information and schematic SyncView is removed',()=>{
+ assert.ok(!html.includes('id="syncView"'));
+ assert.ok(!html.includes('src="syncview.js"'));
+ const capsule=html.slice(html.indexOf('<section class="day"'),html.indexOf('</section>',html.indexOf('<section class="day"')));
+ assert.ok(!capsule.includes('id="clockTime"'));assert.ok(!capsule.includes('id="mTitle"'));
+ assert.ok(html.includes('id="headerContext"'));
+});
