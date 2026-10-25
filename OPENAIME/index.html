@@ -376,6 +376,18 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 .visitor-note a, .visitor-note button { display: inline-block; min-height: 44px; box-sizing: border-box; padding: 12px; margin: 6px 0; font: inherit; }
 .visitor-note a { background: #302c20; color: #fff9d8; border-radius: 4px; }
 .visitor-note :focus-visible, .visitor-note-toggle:focus-visible { outline: 3px solid #276a98; outline-offset: 3px; }
+
+.command-tools { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; padding: 6px; margin-bottom: 6px; border-radius: 18px; background: #fbfaf7; color: #26282b; pointer-events: auto; box-shadow: 0 2px 16px #0002; }
+.command-tools button { min-height: 44px; border: 0; border-radius: 12px; padding: 8px 10px; background: transparent; color: inherit; font: 500 13px var(--font-display); cursor: pointer; }
+.command-tools button[aria-pressed=true] { background: #26282b; color: #fff; }
+.command-tools button:focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
+/* Les réglages deviennent une feuille contextuelle au-dessus de la barre. */
+.panel { top: auto; bottom: 160px; left: 50%; right: auto; width: min(680px, calc(100% - 24px)); max-height: max(160px, calc(100dvh - 240px)); border-radius: 20px; padding: 0; transform: translate(-50%, 30px); transition: opacity .2s, transform .2s; opacity: 0; }
+.panel.open { transform: translate(-50%, 0); opacity: 1; }
+body.editing .stage { margin-right: 0; }
+.pn-body { overscroll-behavior: contain; touch-action: pan-y; }
+@media (max-width: 420px) { .command-tools button { font-size: 12px; padding: 8px; } }
+@media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
 </style>
 
 <button class="visitor-note-toggle" id="visitorNoteToggle" type="button" aria-haspopup="dialog">Déposer un post-it</button>
@@ -438,6 +450,12 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="hud" id="hud">
+    <nav class="command-tools" aria-label="Commandes de la fenêtre">
+      <button type="button" id="toolTime" aria-pressed="true">◷ Temps</button>
+      <button type="button" id="toolMusic" aria-pressed="false">♫ Musique</button>
+      <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">⚙ Personnaliser</button>
+      <button type="button" id="toolMessage">✎ Message</button>
+    </nav>
     <div class="capsule-wrap">
       <div class="pop" id="pop" hidden="">
         <div class="row">
@@ -2099,6 +2117,8 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   function setMusicMode(on) {
     musicMode = on && trackList().length > 0;
     dayEl.classList.toggle('music-mode', musicMode);
+    $('toolTime').setAttribute('aria-pressed', String(!musicMode));
+    $('toolMusic').setAttribute('aria-pressed', String(musicMode));
     musicBtn.setAttribute('aria-pressed', String(musicMode));
     musicBtn.setAttribute('aria-label', musicMode ? 'Revenir à l’heure' : 'Musique : ouvrir la playlist');
     musicBtn.title = musicMode ? 'Revenir à l’heure' : 'Musique';
@@ -2488,7 +2508,7 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
     if (key === 'bug.slat') bug.k = null;
     if (key === 'music.duck') syncPlay();
     applySettings();
-    pnStatus.textContent = 'Modifications visibles ici seulement, jusqu’à l’enregistrement.';
+    pnStatus.textContent = artifactApi ? 'Modifications visibles ici seulement, jusqu’à l’enregistrement.' : 'Essai local uniquement : recharger la page rétablit la fenêtre publiée.';
   }
 
   /* — fabrique des contrôles — */
@@ -2717,14 +2737,16 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
     renderPanel(); panel.hidden = false;
     requestAnimationFrame(() => panel.classList.add('open'));
     setBtn.setAttribute('aria-expanded', 'true');
+    $('toolCustomize').setAttribute('aria-expanded', 'true');
     setTimeout(() => { $('pnClose').focus({ preventScroll: true }); stage.scrollLeft = 0; }, 380);
   }
   function closePanel() {
     editMode = false; editSel = null; document.body.classList.remove('editing');
     hoverBox.hidden = true; selBox.hidden = true;
     panel.classList.remove('open'); setBtn.setAttribute('aria-expanded', 'false');
+    $('toolCustomize').setAttribute('aria-expanded', 'false');
     setTimeout(() => { panel.hidden = true; stage.scrollLeft = 0; }, 350);
-    setBtn.focus({ preventScroll: true });
+    $('toolCustomize').focus({ preventScroll: true });
   }
   setBtn.addEventListener('click', () => panel.hidden ? openPanel(true) : closePanel());
   $('pnClose').addEventListener('click', closePanel);
@@ -2780,14 +2802,34 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
   }
   pnSave.addEventListener('click', saveSettings);
 
-  // le bouton n'apparaît que pour le propriétaire de la page
+  // La barre ouvre les réglages pour tous, sans droit de publication.
+  pnSave.hidden = true;
+  pnStatus.textContent = 'Essai local uniquement : recharger la page rétablit la fenêtre publiée.';
+  $('toolCustomize').addEventListener('click', () => panel.hidden ? openPanel(true) : closePanel());
+  $('toolTime').addEventListener('click', () => {
+    if (!panel.hidden) closePanel();
+    setMusicMode(false);
+    $('timeRange').focus();
+  });
+  $('toolMusic').addEventListener('click', () => {
+    if (!panel.hidden) closePanel();
+    setMusicMode(true);
+    if (musicMode) mPlay.focus();
+    else toast('Aucun morceau dans cette fenêtre.');
+  });
+  $('toolMessage').addEventListener('click', () => {
+    if (!panel.hidden) closePanel();
+    $('visitorNote').showModal();
+  });
+
+  // La publication historique reste réservée au propriétaire dans Artifacts.
   (async () => {
     const c = window.claude;
     if (!c || typeof c.use !== 'function') return;
     try {
       const [a, u] = await Promise.all([c.use('artifact'), c.use('user')]);
       const owner = !!(u && typeof u.isOwner === 'function' && await u.isOwner());
-      if (a && owner) { artifactApi = a; setBtn.hidden = false; }
+      if (a && owner) { artifactApi = a; setBtn.hidden = false; pnSave.hidden = false; }
     } catch (e) { /* vue sans réglages */ }
   })();
 
