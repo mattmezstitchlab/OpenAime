@@ -417,16 +417,12 @@ body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9
 #commandAdd[aria-expanded=true] span { transform: rotate(45deg); }
 @media(prefers-reduced-motion: reduce) { #commandAdd span { transition: none; } }
 /* La lecture du contexte quitte la capsule, sans ajouter une seconde barre. */
-.capsule-compose { pointer-events: auto; box-sizing: border-box; width: min(680px, calc(100vw - 24px)); max-height: 65dvh; overflow: auto; padding: 14px; border-radius: 22px; color: #26282b; background: #fbfaf7; box-shadow: 0 6px 30px #0003; touch-action: pan-y; user-select: text; }
-.capsule-compose header, .note-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.capsule-compose label { display: block; font-size: 13px; margin: 8px 0; }
-.capsule-compose textarea, .capsule-compose input { box-sizing: border-box; width: 100%; padding: 10px; border: 0; border-radius: 10px; background: #eeeae3; color: #26282b; font: inherit; touch-action: auto; user-select: text; }
-.capsule-compose textarea { resize: vertical; min-height: 64px; max-height: 140px; }
-.capsule-compose button { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 12px; background: #eeeae3; color: inherit; font: inherit; cursor: pointer; }
-#visitorNoteContinue { background: #26282b; color: #fff; }
-.capsule-compose p, #noteCount { font-size: 12px; line-height: 1.4; }
-.capsule-compose :focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
-body.composing .capsule-wrap { display: none; }
+.capsule-compose input { flex: 1; min-width: 0; height: 28px; padding: 0 6px; border: 0; background: transparent; color: inherit; font: inherit; user-select: text; touch-action: auto; }
+.capsule-compose input:focus { outline: none; }
+.capsule-compose:focus-within { box-shadow: 0 0 0 2px var(--muted); }
+.sr-note { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.note-status { position: absolute; bottom: calc(100% + 8px); left: 8px; right: 8px; margin: 0; padding: 6px 10px; border-radius: 10px; background: var(--hud-bg); color: var(--ink); font-size: 12px; }
+body.composing .capsule-wrap > .day:not(.capsule-compose) { display: none; }
 .slat.causal-accent { outline: 2px solid #c5a8d4; outline-offset: -2px; animation: causal-light .8s ease-out; }
 @keyframes causal-light { from { filter: brightness(1.18); } to { filter: brightness(1); } }
 @media(prefers-reduced-motion: reduce) { .slat.causal-accent { animation: none; } }
@@ -498,19 +494,6 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="hud" id="hud">
-    <form id="visitorNote" class="capsule-compose" hidden aria-label="Préparer un message privé">
-      <header><button type="button" id="noteBack" aria-label="Revenir à la fenêtre en conservant le brouillon">←</button><strong>Post-it privé · brouillon</strong></header>
-      <label for="visitorNoteText">Votre message</label>
-      <textarea id="visitorNoteText" maxlength="2400" rows="2" required minlength="20" placeholder="Une question, une idée, une demande…"></textarea>
-      <div class="note-actions"><button type="button" id="noteFields" aria-expanded="false" aria-controls="noteExtras">+ Date et lieu</button><span id="noteCount">0 / 2 400</span></div>
-      <div id="noteExtras" hidden>
-        <label>Date souhaitée <input type="date" id="noteDate"></label>
-        <label>Lieu <input id="notePlace" maxlength="180" autocomplete="off" placeholder="Ville ou lieu de l’événement"></label>
-      </div>
-      <p id="notePrivacy">Rien n’est envoyé ici. L’étape suivante ouvre AIMEStudio pour vérifier vos coordonnées et confirmer l’envoi. Le brouillon accompagne le lien : ne le partagez pas.</p>
-      <p id="noteStatus" role="status"></p>
-      <div class="note-actions"><button type="button" id="noteDiscard">Effacer le brouillon</button><button type="submit" id="visitorNoteContinue">Vérifier dans AIMEStudio →</button></div>
-    </form>
     <div class="capsule-wrap">
       <div class="pop" id="pop" hidden="">
         <div class="row">
@@ -548,6 +531,19 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
         <p id="sceneStatus" role="status"></p>
         <button type="button" id="sceneRestore" disabled>Rétablir l’ambiance précédente</button>
       </div>
+      <form id="visitorNote" class="day capsule-compose" hidden aria-label="Message privé, saisie progressive">
+        <button class="icon" type="button" id="noteBack" aria-label="Revenir sans perdre le brouillon">←</button>
+        <label class="sr-note" for="visitorNoteText">Message privé, de 20 à 2 400 caractères</label>
+        <input id="visitorNoteText" maxlength="2400" placeholder="Votre message privé…" aria-describedby="noteStatus">
+        <label class="sr-note" for="noteDate">Date souhaitée, facultative</label>
+        <input type="date" id="noteDate" hidden aria-label="Date souhaitée, facultative">
+        <label class="sr-note" for="notePlace">Lieu, facultatif</label>
+        <input id="notePlace" maxlength="180" hidden placeholder="Ville ou lieu, facultatif…">
+        <button class="icon" type="button" id="noteFields" aria-label="Champ suivant : message, date ou lieu">+</button>
+        <button class="icon" type="button" id="noteDiscard" aria-label="Effacer le brouillon">×</button>
+        <button class="icon" type="submit" id="visitorNoteContinue" aria-label="Vérifier le brouillon dans AIMEStudio">→</button>
+      </form>
+      <p id="noteStatus" class="note-status" role="status" hidden></p>
       <section class="day" aria-label="Commandes de la fenêtre">
         <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false"><span aria-hidden="true"></span></button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>

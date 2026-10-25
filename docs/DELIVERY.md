@@ -13,7 +13,7 @@ Ce document sépare les parcours utilisables des idées retenues. La branche n'e
 
 ## Données et transmission
 
-Aucune pièce jointe, OCR, IA ou création de rôle n'est simulée. Le message est transmis dans le fragment d'une destination AIMEStudio fixe. Cette approche n'est pas un chiffrement ; ne pas partager le lien. La confirmation existante efface le fragment, demande identité et consentement, puis utilise son API de contact. La page manque dans la source de production examinée : la PR AIMEStudio #151 est encore ouverte et doit être fusionnée/déployée avant cette version OpenAime. L'alias de branche OpenAime est relié à l'alias AIME de cette PR pour la prévisualisation. La réception réelle et le destinataire d'e-mail ne sont pas testés. Pas de copie des clés entre projets.
+Aucune pièce jointe, OCR, IA ou création de rôle n'est simulée. Le message est transmis dans le fragment d'une destination AIMEStudio fixe. Cette approche n'est pas un chiffrement ; ne pas partager le lien. La confirmation existante efface le fragment, demande identité et consentement, puis utilise son API de contact. La PR AIMEStudio #151 a été fusionnée le 25 octobre 2026 à 21:41 UTC. Le raccord utilise désormais la page publique AIMEStudio. La réception réelle et le destinataire d'e-mail ne sont pas testés. Pas de copie des clés entre projets.
 
 ## Raccords obligatoires avant de parler de produit complet
 
@@ -29,3 +29,7 @@ Aucune pièce jointe, OCR, IA ou création de rôle n'est simulée. Le message e
 ## Retiré
 
 La grille SyncView schématique est retirée : elle ne comparait pas de vraies vues autorisées. Ne la réintroduire qu'avec une valeur vérifiable.
+
+## Capsule compacte
+
+Le formulaire utilise la même classe `.day` dans le même conteneur que la capsule habituelle. Un seul champ est affiché : Message, Date ou Lieu, via +. Retour conserve les réponses, × efface avec confirmation, → passe à la vérification. Les aides sont transitoires hors du flux ; aucune augmentation de hauteur.

@@ -68,3 +68,7 @@ Restent à construire : polaroid/médias, menus de participations réelles AIME,
 Le post-it ouvre la saisie directement à la place des commandes du bas. Retour/Échap conserve le brouillon dans la page, sans stockage durable ; rechargement ou fermeture peuvent le perdre après avertissement du navigateur. Date et lieu sont facultatifs. Effacer demande confirmation si le brouillon a changé. Le bouton « Vérifier dans AIMEStudio » est un passage explicite vers les coordonnées et le consentement, pas un envoi confirmé. L'accent sur la lamelle indique le contexte de saisie, pas un succès serveur.
 
 État complet et raccords restant à réaliser : [docs/DELIVERY.md](docs/DELIVERY.md).
+
+### Correction de dimensions
+
+La saisie réutilise exactement la capsule `.day`, sans panneau. Le + parcourt les champs message/date/lieu un à un. La PR AIMEStudio #151 est fusionnée ; le passage utilise sa page publique. Aucune réception réelle d’e-mail n’est encore vérifiée.
