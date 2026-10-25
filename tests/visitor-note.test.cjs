@@ -5,7 +5,7 @@ const vm=require('node:vm');
 const code=fs.readFileSync('OPENAIME/visitor-note.js','utf8');
 function setup(host='openaime.vercel.app'){
  const elements={};
- for(const id of ['visitorNoteToggle','visitorNote','visitorNoteText','visitorNoteContinue']) elements[id]={events:{},addEventListener(n,f){this.events[n]=f},showModal(){this.open=true},focus(){this.focused=true}};
+ for(const id of ['visitorNoteToggle','visitorNote','visitorNoteText','visitorNoteContinue','postitBtn']) elements[id]={events:{},addEventListener(n,f){this.events[n]=f},showModal(){this.open=true},focus(){this.focused=true}};
  elements.visitorNoteContinue.href='https://aimestudio.vercel.app/contact/openaime/';
  elements.visitorNoteText.value='Bonjour, une question pour mon mariage & une date ?';
  vm.runInNewContext(code,{window:{location:{hostname:host}},document:{getElementById(id){return elements[id]}}});
@@ -21,10 +21,9 @@ test('draft goes only into fragment after deliberate click',()=>{
  assert.ok(!code.includes('fetch('));
  assert.ok(!code.includes('localStorage'));
 });
-test('opens native modal and returns keyboard focus on close',()=>{
- const e=setup();e.visitorNoteToggle.events.click();
- assert.equal(e.visitorNote.open,true);
- e.visitorNote.events.close();assert.equal(e.visitorNoteToggle.focused,true);
+test('returns keyboard focus to the scene post-it on close',()=>{
+ const e=setup();
+ e.visitorNote.events.close();assert.equal(e.postitBtn.focused,true);
 });
 test('preview stays separate from public destination',()=>{
  const e=setup('openaime-git-feat-windo-1bf9ec-matthieulecointre-9534s-projects.vercel.app');

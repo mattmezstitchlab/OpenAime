@@ -377,20 +377,20 @@ body.editing .panel button, body.editing .panel input[type=checkbox], body.editi
 .visitor-note a { background: #302c20; color: #fff9d8; border-radius: 4px; }
 .visitor-note :focus-visible, .visitor-note-toggle:focus-visible { outline: 3px solid #276a98; outline-offset: 3px; }
 
-.command-tools { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; padding: 6px; margin-bottom: 6px; border-radius: 18px; background: #fbfaf7; color: #26282b; pointer-events: auto; box-shadow: 0 2px 16px #0002; }
-.command-tools button { min-height: 44px; border: 0; border-radius: 12px; padding: 8px 10px; background: transparent; color: inherit; font: 500 13px var(--font-display); cursor: pointer; }
-.command-tools button[aria-pressed=true] { background: #26282b; color: #fff; }
-.command-tools button:focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
+.command-menu { display: grid; gap: 8px; max-height: 45dvh; overflow: auto; }
+.command-menu button { min-height: 44px; padding: 10px 14px; border: 1px solid #aaa; border-radius: 12px; background: #fbfaf7; color: #26282b; font: inherit; text-align: left; cursor: pointer; }
+.command-menu button[aria-pressed=true] { background: #26282b; color: white; }
+.command-menu p { margin: 0; font-size: 12px; }
+.command-menu :focus-visible, #commandAdd:focus-visible, #commandOptions:focus-visible { outline: 3px solid #276a98; outline-offset: 2px; }
 /* Les réglages deviennent une feuille contextuelle au-dessus de la barre. */
-.panel { top: auto; bottom: 160px; left: 50%; right: auto; width: min(680px, calc(100% - 24px)); max-height: max(160px, calc(100dvh - 240px)); border-radius: 20px; padding: 0; transform: translate(-50%, 30px); transition: opacity .2s, transform .2s; opacity: 0; }
+.panel { top: auto; bottom: 92px; left: 50%; right: auto; width: min(680px, calc(100% - 24px)); max-height: min(340px, calc(100dvh - 180px)); border-radius: 20px; padding: 0; transform: translate(-50%, 30px); transition: opacity .2s, transform .2s; opacity: 0; }
 .panel.open { transform: translate(-50%, 0); opacity: 1; }
 body.editing .stage { margin-right: 0; }
 .pn-body { overscroll-behavior: contain; touch-action: pan-y; }
-@media (max-width: 420px) { .command-tools button { font-size: 12px; padding: 8px; } }
+
 @media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
 </style>
 
-<button class="visitor-note-toggle" id="visitorNoteToggle" type="button" aria-haspopup="dialog">Déposer un post-it</button>
 <dialog class="visitor-note" id="visitorNote" aria-labelledby="visitorNoteTitle" aria-describedby="visitorNoteHelp">
   <h2 id="visitorNoteTitle">Un mot sur ma fenêtre</h2>
   <p id="visitorNoteHelp">Ce post-it est privé, il ne sera pas affiché sur le store. Prépare ton message ici, puis confirme tes coordonnées et l’envoi sur AIMEStudio.</p>
@@ -450,12 +450,6 @@ body.editing .stage { margin-right: 0; }
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="hud" id="hud">
-    <nav class="command-tools" aria-label="Commandes de la fenêtre">
-      <button type="button" id="toolTime" aria-pressed="true">◷ Temps</button>
-      <button type="button" id="toolMusic" aria-pressed="false">♫ Musique</button>
-      <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">⚙ Personnaliser</button>
-      <button type="button" id="toolMessage">✎ Message</button>
-    </nav>
     <div class="capsule-wrap">
       <div class="pop" id="pop" hidden="">
         <div class="row">
@@ -472,7 +466,19 @@ body.editing .stage { margin-right: 0; }
         <div class="pl-head"><span class="lbl">Playlist</span><span class="pl-count" id="plCount"></span></div>
         <ol class="pl-list" id="plList"></ol>
       </div>
-      <section class="day" aria-label="Moment de la journée">
+      <div class="pop command-menu" id="commandModes" hidden>
+        <strong>Lecture de la capsule</strong>
+        <button type="button" id="toolTime" aria-pressed="true">◷ Temps et phases</button>
+        <button type="button" id="toolMusic" aria-pressed="false">♫ Musique</button>
+        <p>Médias, Personnes et Jour J : à venir.</p>
+      </div>
+      <div class="pop command-menu" id="commandMore" hidden>
+        <strong>Outils de la fenêtre</strong>
+        <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">Personnaliser ma vue</button>
+        <p>Essai temporaire, sans modifier la fenêtre publiée.</p>
+      </div>
+      <section class="day" aria-label="Commandes de la fenêtre">
+        <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false">+</button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
         <time class="t-only" id="clockTime">--:--</time>
         <button class="phase-btn t-only" id="phaseBtn" type="button" title="Phase suivante">…</button>
@@ -498,6 +504,7 @@ body.editing .stage { margin-right: 0; }
         <button class="icon" id="soundBtn" type="button" aria-pressed="false" aria-label="Son d'ambiance" title="Son d'ambiance">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"></path><path id="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></svg>
         </button>
+        <button class="icon" id="commandOptions" type="button" aria-label="Outils supplémentaires" aria-controls="commandMore" aria-expanded="false">⋮</button>
       </section>
     </div>
   </div>
@@ -2320,7 +2327,8 @@ body.editing .stage { margin-right: 0; }
     hotCache.set(el, key);
     Object.assign(el.style, { left: r.x.toFixed(0) + 'px', top: r.y.toFixed(0) + 'px', width: r.w.toFixed(0) + 'px', height: Math.max(14, r.h).toFixed(0) + 'px' });
   }
-  postitBtn.addEventListener('click', () => { const t = currentTask(); if (t) showDetail(`${t.time} · ${t.title}`, t.detail); });
+  postitBtn.setAttribute('aria-label', 'Post-it : laisser un message privé');
+  postitBtn.addEventListener('click', () => $('visitorNote').showModal());
   const hitAt = (x, y) => { for (let i = hits.length - 1; i >= 0; i--) { const q = hits[i]; if (x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h) return q; } return null; };
 
   /* ───────── Application des réglages ───────── */
@@ -2746,7 +2754,7 @@ body.editing .stage { margin-right: 0; }
     panel.classList.remove('open'); setBtn.setAttribute('aria-expanded', 'false');
     $('toolCustomize').setAttribute('aria-expanded', 'false');
     setTimeout(() => { panel.hidden = true; stage.scrollLeft = 0; }, 350);
-    $('toolCustomize').focus({ preventScroll: true });
+    $('commandOptions').focus({ preventScroll: true });
   }
   setBtn.addEventListener('click', () => panel.hidden ? openPanel(true) : closePanel());
   $('pnClose').addEventListener('click', closePanel);
@@ -2817,9 +2825,24 @@ body.editing .stage { margin-right: 0; }
     if (musicMode) mPlay.focus();
     else toast('Aucun morceau dans cette fenêtre.');
   });
-  $('toolMessage').addEventListener('click', () => {
-    if (!panel.hidden) closePanel();
-    $('visitorNote').showModal();
+  const commandMenus = [[$('commandAdd'), $('commandModes')], [$('commandOptions'), $('commandMore')]];
+  function closeCommandMenus() {
+    for (const [button, menu] of commandMenus) { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); }
+  }
+  for (const [button, menu] of commandMenus) {
+    button.addEventListener('click', () => {
+      const open = menu.hidden;
+      closeCommandMenus();
+      if (!panel.hidden) closePanel();
+      if (open) { menu.hidden = false; button.setAttribute('aria-expanded', 'true'); menu.querySelector('button').focus(); }
+    });
+    menu.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.stopPropagation(); closeCommandMenus(); button.focus(); }
+    });
+    menu.addEventListener('click', e => { if (e.target.closest('button')) closeCommandMenus(); });
+  }
+  document.addEventListener('pointerdown', e => {
+    if (!commandMenus.some(([button, menu]) => button.contains(e.target) || menu.contains(e.target))) closeCommandMenus();
   });
 
   // La publication historique reste réservée au propriétaire dans Artifacts.

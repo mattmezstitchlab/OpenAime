@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync('OPENAIME/index.html','utf8');
 const start=html.indexOf('  pnSave.hidden = true;');
-const code=html.slice(start,html.indexOf('  // La publication historique',start));
+const code=html.slice(start,html.indexOf('  const commandMenus',start));
 function setup(){
  const nodes={};const state={panel:{hidden:true},save:{hidden:false},status:{},opens:0,closes:0};
  function $(id){return nodes[id] ||= {events:{},addEventListener(k,f){this.events[k]=f},focus(){this.focused=true},showModal(){this.open=true}}}
@@ -22,7 +22,11 @@ test('time and music share existing player and close editing',()=>{
  $('toolMusic').events.click();assert.equal(state.panel.hidden,true);assert.equal(state.music,true);
  $('toolTime').events.click();assert.equal(state.music,false);assert.equal($('timeRange').focused,true);
 });
-test('message tool only opens the draft modal',()=>{
- const {$}=setup();$('toolMessage').events.click();assert.equal($('visitorNote').open,true);
- assert.ok(!code.includes('fetch('));
+test('one capsule contains mode and options buttons, no second toolbar',()=>{
+ assert.ok(!html.includes('class="command-tools"'));
+ assert.ok(!html.includes('id="toolMessage"'));
+ const capsule=html.slice(html.indexOf('<section class="day"'),html.indexOf('</section>',html.indexOf('<section class="day"')));
+ assert.ok(capsule.includes('id="commandAdd"'));
+ assert.ok(capsule.includes('id="commandOptions"'));
+ assert.ok(html.includes("postitBtn.addEventListener('click', () => $('visitorNote').showModal())"));
 });
