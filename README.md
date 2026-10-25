@@ -54,3 +54,7 @@ Le nom ouvre un menu personnel, puis « Comparer les vues » affiche quatre ou s
 ## Catalogue de scènes
 
 Capsule → + → Scènes : six ambiances manuelles appliquées à la scène existante, avec retour à l'ambiance précédente. Ce sont des simulations locales, pas des prévisions météo ni des événements programmés. Contrat, inventaire et étapes futures : [docs/SCENES.md](docs/SCENES.md).
+
+### Store commun dans SyncView
+
+Les curseurs Hauteur/Lames de la maquette pilotent le même état de store que la scène principale. La molette sur la scène conserve son comportement, et les carreaux suivent la hauteur/orientation via des variables CSS communes. Sortir de SyncView conserve la position choisie. Les carreaux restent des schémas CSS sans données par rôle ; ce raccord ne constitue pas une synchronisation de sessions ou de permissions.

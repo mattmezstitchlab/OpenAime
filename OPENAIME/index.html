@@ -407,9 +407,12 @@ body.editing .stage { margin-right: 0; }
 .sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px; min-height: calc(100% - 64px); background: repeating-linear-gradient(95deg,#795337,#95704d 6px,#876344 9px); }
 .sync-grid.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .sync-pane { position: relative; min-height: 160px; background: linear-gradient(var(--sky-top), var(--sky-bot)); overflow: hidden; box-shadow: inset 0 0 12px #0005; }
-.sync-pane::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 34px, #dad8d0 35px 48px, #92918e 49px 51px); opacity: .65; }
+.sync-pane::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 34px, #dad8d0 35px 48px, #92918e 49px 51px); opacity: .65; height: var(--sync-drop, 86%); bottom: auto; background: repeating-linear-gradient(transparent 0 calc(30px - var(--sync-slat, 8px)), #dad8d0 calc(30px - var(--sync-slat, 8px)) 29px, #92918e 30px); }
 .sync-pane h2, .sync-pane p { position: relative; display: table; margin: 12px; padding: 6px 10px; border-radius: 8px; background: #fbfaf7; color: #26282b; font-size: 14px; }
 .sync-pane p { font-size: 12px; }
+.sync-adjust { display: flex; flex-wrap: wrap; gap: 12px; padding: 8px; background: #fbfaf7; color: #26282b; }
+.sync-adjust label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.sync-adjust input { min-height: 32px; }
 .sync-controls { display: flex; align-items: center; gap: 6px; }
 body.syncing #blind, body.syncing #space, body.syncing #rays, body.syncing #infoStars, body.syncing .hotspot { visibility: hidden; }
 body.syncing .m-only, body.syncing #musicBtn, body.syncing #ambBtn, body.syncing #soundBtn { display: none !important; }
@@ -477,6 +480,10 @@ body.syncing .t-only { display: initial !important; }
   </div>
   <section id="syncView" class="sync-view" aria-label="SyncView — maquette de comparaison" hidden>
     <p class="sync-notice">Maquette visuelle · mêmes données publiques dans chaque carreau · aucune permission vérifiée</p>
+    <div class="sync-adjust" aria-label="Stores synchronisés">
+      <label>Hauteur <input id="syncHeight" type="range" min="0" max="100" value="86"></label>
+      <label>Lames <input id="syncAngle" type="range" min="0" max="100" value="74"></label>
+    </div>
     <div id="syncGrid" class="sync-grid"></div>
   </section>
   <button class="setbtn" id="setBtn" type="button" aria-label="Réglages de la fenêtre" aria-controls="panel" aria-expanded="false" title="Réglages" hidden="">
@@ -922,11 +929,19 @@ body.syncing .t-only { display: initial !important; }
     prevDrop = drop; prevTilt = tilt;
 
     const dp = Math.round(drop * 100), deg = Math.round(userAngle);
+    root.style.setProperty('--sync-drop', dp + '%');
+    root.style.setProperty('--sync-slat', Math.max(2, Math.round(14 * (1 - tilt))) + 'px');
     handle.setAttribute('aria-valuenow', dp);
     handle.setAttribute('aria-valuetext', `store descendu à ${dp} %`);
     wand.setAttribute('aria-valuenow', Math.round(tilt * 100));
     wand.setAttribute('aria-valuetext', `lames ouvertes à ${deg} degrés`);
   }
+
+  document.addEventListener('openaime:blind-preview', e => {
+    const { height, angle } = e.detail || {};
+    if (Number.isFinite(height)) dropT = clamp(height / 100, 0, 1);
+    if (Number.isFinite(angle)) tiltT = clamp(angle / 100, 0, 1);
+  });
 
   /* ───────── Toile du ciel ───────── */
   const back = $('back'), front = $('front'), glass = $('glass'), raysCv = $('rays');

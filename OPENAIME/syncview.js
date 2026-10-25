@@ -21,8 +21,13 @@
     document.body.classList.toggle('syncing', open);
     if (open) {
       if ($('musicBtn').getAttribute('aria-pressed') === 'true') $('musicBtn').click();
+      $('syncHeight').value = $('handle').getAttribute('aria-valuenow');
+      $('syncAngle').value = $('wand').getAttribute('aria-valuenow');
       render(4); $('syncExit').focus(); }
     else name.focus();
+  }
+  for (const [id, key] of [['syncHeight', 'height'], ['syncAngle', 'angle']]) {
+    $(id).addEventListener('input', () => document.dispatchEvent(new CustomEvent('openaime:blind-preview', { detail: { [key]: Number($(id).value) } })));
   }
   name.addEventListener('click', () => { const open = menu.hidden; closeMenu(); menu.hidden = !open; name.setAttribute('aria-expanded', String(open)); if (open) $('identityHome').focus(); });
   $('identitySync').addEventListener('click', () => show(true));
