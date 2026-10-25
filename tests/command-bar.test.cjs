@@ -37,3 +37,8 @@ test('header owns reading information and schematic SyncView is removed',()=>{
  assert.ok(!capsule.includes('id="clockTime"'));assert.ok(!capsule.includes('id="mTitle"'));
  assert.ok(html.includes('id="headerContext"'));
 });
+test('music targets the command capsule, never the draft sharing its style',()=>{
+ assert.ok(html.includes("const dayEl = $('commandCapsule')"));
+ assert.ok(html.includes('id="commandCapsule"'));
+ assert.ok(!html.includes("document.querySelector('.day')"));
+});

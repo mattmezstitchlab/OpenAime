@@ -544,7 +544,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
         <button class="icon" type="submit" id="visitorNoteContinue" aria-label="Vérifier le brouillon dans AIMEStudio">→</button>
       </form>
       <p id="noteStatus" class="note-status" role="status" hidden></p>
-      <section class="day" aria-label="Commandes de la fenêtre">
+      <section class="day" id="commandCapsule" aria-label="Commandes de la fenêtre">
         <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false"><span aria-hidden="true"></span></button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
         <button class="phase-btn t-only" id="phaseBtn" type="button" title="Phase suivante">…</button>
@@ -2166,7 +2166,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
 
 
   /* ───────── Détail dans la capsule ───────── */
-  const dayEl = document.querySelector('.day'), detailEl = $('detail'), dtTitle = $('dtTitle'), dtText = $('dtText'), dtClose = $('dtClose');
+  const dayEl = $('commandCapsule'), detailEl = $('detail'), dtTitle = $('dtTitle'), dtText = $('dtText'), dtClose = $('dtClose');
   let dtTimer = 0;
   const dtLink = $('dtLink');
   function showDetail(title, text, url) {
@@ -2448,7 +2448,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
   const rectOf = el => { const r = el.getBoundingClientRect(), s0 = stage.getBoundingClientRect(); return { x: r.left - s0.left, y: r.top - s0.top, w: r.width, h: r.height }; };
   function allRegions() {
     const list = regs.slice();
-    if (S.bar.show && !hud.hidden) list.push({ id: musicMode ? 'music' : 'bar', ...rectOf(document.querySelector('.day')), pri: 8 });
+    if (S.bar.show && !hud.hidden) list.push({ id: musicMode ? 'music' : 'bar', ...rectOf($('commandCapsule')), pri: 8 });
     if (S.bar.show && !hud.hidden && !musicBtn.hidden) list.push({ id: 'music', ...rectOf(musicBtn), pri: 9 });
     list.push({ id: 'signature', x: 0, y: 0, w: W, h: head, pri: 7 });
     const cr = rectOf(cord), hr = rectOf(handle);
