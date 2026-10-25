@@ -390,6 +390,13 @@ body.editing .stage { margin-right: 0; }
 
 @media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
 
+.demo-stamp { position: absolute; left: 60%; top: 8px; width: 48px; height: 52px; border: 3px dotted #866d91; background: #eee0f5; color: #382642; font: 20px sans-serif; cursor: pointer; pointer-events: auto; transform: rotate(-9deg); box-shadow: 2px 3px 4px #0003; }
+.demo-stamp::after { content: 'DÉMO'; display: block; font: 8px sans-serif; }
+body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9dc,#f1d7a0); border-radius: 50%; box-shadow: 0 0 10px #c2a2df80; animation: orb-notice .7s ease-in-out 2; }
+@keyframes orb-notice { 25% { transform: translateX(-4px) rotate(-9deg); } 75% { transform: translateX(4px) rotate(9deg); } }
+@keyframes stamp-peel { from { transform: translateY(-36px) rotate(8deg); opacity: .6; } to { transform: translateY(0) rotate(-9deg); opacity: 1; } }
+.demo-stamp { animation: stamp-peel .6s ease-out; }
+@media(prefers-reduced-motion: reduce) { body.signal-demo .handle span, .demo-stamp { animation: none; } }
 .scene-catalog { max-height: 65dvh; overflow: auto; touch-action: pan-y; }
 .scene-catalog header { display: flex; justify-content: space-between; align-items: center; }
 .scene-catalog p { font-size: 12px; line-height: 1.5; }
@@ -518,6 +525,8 @@ body.syncing .t-only { display: initial !important; }
       </div>
       <div class="pop command-menu" id="commandMore" hidden>
         <strong>Outils de la fenêtre</strong>
+        <button type="button" id="demoSignal" aria-pressed="false">Essayer un signal · démonstration</button>
+        <p id="signalStatus" role="status"></p>
         <button type="button" id="toolCustomize" aria-controls="panel" aria-expanded="false">Personnaliser ma vue</button>
         <p>Essai temporaire, sans modifier la fenêtre publiée.</p>
       </div>
@@ -832,6 +841,7 @@ body.syncing .t-only { display: initial !important; }
       slatsEl.parentNode.appendChild(l);
       ladders.push(l);
     }
+    placeSignalStamp();
     focal = { x: W / 2, y: H * .42, r: Math.min(W, H) * .17 };
     slatCache = []; lastBlind = ''; sY = []; sYV = []; sAng = []; sAngV = []; wasHung = [];
   }
@@ -2909,6 +2919,33 @@ body.syncing .t-only { display: initial !important; }
   }
   document.addEventListener('pointerdown', e => {
     if (!commandMenus.some(([button, menu]) => button.contains(e.target) || menu.contains(e.target))) closeCommandMenus();
+  });
+
+  // Opt-in visual demo; never represents a real document or message.
+  let signalDemoActive = false;
+  const signalStamp = document.createElement('button');
+  signalStamp.type = 'button'; signalStamp.className = 'demo-stamp'; signalStamp.textContent = '▤';
+  signalStamp.setAttribute('aria-label', 'Démonstration : document à vérifier, aucun document réel');
+  function placeSignalStamp() {
+    // build() can run before this demo is initialized.
+    const button = document.getElementById('demoSignal');
+    if (!button || button.getAttribute('aria-pressed') !== 'true') return;
+    const target = slats[Math.min(3, slats.length - 1)];
+    if (target) target.appendChild(signalStamp);
+  }
+  function setSignalDemo(active) {
+    signalDemoActive = active;
+    document.body.classList.toggle('signal-demo', active);
+    $('demoSignal').setAttribute('aria-pressed', String(active));
+    $('demoSignal').textContent = active ? 'Effacer le signal de démonstration' : 'Essayer un signal · démonstration';
+    $('signalStatus').textContent = active ? 'Démo : document à vérifier. Aucun document réel. Le store reste utilisable.' : '';
+    if (active) placeSignalStamp(); else signalStamp.remove();
+  }
+  $('demoSignal').addEventListener('click', () => setSignalDemo(!signalDemoActive));
+  signalStamp.addEventListener('click', () => {
+    showDetail('Document · démonstration', 'Exemple de signal visuel uniquement : aucun document ni échec réel.');
+    setSignalDemo(false);
+    dtClose.focus();
   });
 
   // Scene previews share the existing rendering state; only the first preview captures a return point.

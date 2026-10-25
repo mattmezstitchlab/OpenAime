@@ -58,3 +58,9 @@ Capsule → + → Scènes : six ambiances manuelles appliquées à la scène exi
 ### Store commun dans SyncView
 
 Les curseurs Hauteur/Lames de la maquette pilotent le même état de store que la scène principale. La molette sur la scène conserve son comportement, et les carreaux suivent la hauteur/orientation via des variables CSS communes. Sortir de SyncView conserve la position choisie. Les carreaux restent des schémas CSS sans données par rôle ; ce raccord ne constitue pas une synchronisation de sessions ou de permissions.
+
+## Signaux sensibles — démonstration volontaire
+
+⋮ → « Essayer un signal · démonstration » affiche un timbre document sur une lamelle et colore la poignée-perle. Le timbre arrive avec une courte animation de décollement et la perle oscille deux fois, jamais en boucle. En mouvements réduits, les animations sont supprimées. Toucher le timbre explique qu'il ne correspond à aucun document réel, retire le signal et place le focus sur la fermeture du détail. On peut également effacer le signal depuis ⋮.
+
+Aucun document, notification, rôle ou couleur AIME officielle n'est raccordé : la teinte de démo n'encode aucune permission. Le store reste pilotable ; aucun nœud ne bloque sa mécanique. Les futurs signaux devront être alimentés par des états serveur explicites et accompagnés d'un texte, avec permissions et possibilité de les retrouver dans la capsule.
