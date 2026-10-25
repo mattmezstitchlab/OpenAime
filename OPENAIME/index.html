@@ -409,6 +409,13 @@ body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9
 .identity-menu { position: fixed; top: 68px; left: 14px; z-index: 20; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; border-radius: 16px; padding: 14px; background: #fbfaf7; color: #26282b; box-shadow: 0 8px 30px #0003; }
 .identity-menu button { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
 .identity-menu p { font-size: 12px; line-height: 1.5; }
+/* Signature du + reprise de dock/dock.css dans AIMEStudio. */
+#commandAdd { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(#0B0B0D,#0B0B0D) padding-box, conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box; display: grid; place-items: center; padding: 0; }
+#commandAdd span { position: relative; width: 18px; height: 18px; transition: transform .25s ease; }
+#commandAdd span::before, #commandAdd span::after { content: ''; position: absolute; left: 50%; top: 50%; width: 18px; height: 2.2px; border-radius: 2px; background: #fff; transform: translate(-50%,-50%); }
+#commandAdd span::after { transform: translate(-50%,-50%) rotate(90deg); }
+#commandAdd[aria-expanded=true] span { transform: rotate(45deg); }
+@media(prefers-reduced-motion: reduce) { #commandAdd span { transition: none; } }
 /* La lecture du contexte quitte la capsule, sans ajouter une seconde barre. */
 .header-context { position: absolute; z-index: 8; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 40%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #26282b; font-size: 13px; text-align: center; pointer-events: auto; }
 #headerMusic { min-width: 0; }
@@ -526,7 +533,7 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
         <button type="button" id="sceneRestore" disabled>Rétablir l’ambiance précédente</button>
       </div>
       <section class="day" aria-label="Commandes de la fenêtre">
-        <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false">+</button>
+        <button class="icon" id="commandAdd" type="button" aria-label="Choisir la lecture de la capsule" aria-controls="commandModes" aria-expanded="false"><span aria-hidden="true"></span></button>
         <button class="icon live t-only" id="liveBtn" type="button" aria-pressed="true" aria-label="En direct" title="En direct"></button>
         <button class="phase-btn t-only" id="phaseBtn" type="button" title="Phase suivante">…</button>
         <div class="detail" id="detail" aria-live="polite" hidden=""><b id="dtTitle"></b><span id="dtText"></span><a id="dtLink" target="_blank" rel="noopener" hidden=""></a></div>
