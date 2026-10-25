@@ -42,3 +42,7 @@ test('music targets the command capsule, never the draft sharing its style',()=>
  assert.ok(html.includes('id="commandCapsule"'));
  assert.ok(!html.includes("document.querySelector('.day')"));
 });
+test('orb drag never opens a duplicate tools menu',()=>{
+ const drag=html.slice(html.indexOf('  function dragVertical'),html.indexOf('  stage.addEventListener(\'wheel\', e =>'));
+ assert.ok(!drag.includes("$('commandOptions').click()"));
+});

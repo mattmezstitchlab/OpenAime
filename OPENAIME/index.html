@@ -392,7 +392,7 @@ body.editing .stage { margin-right: 0; }
 
 .demo-stamp { position: absolute; left: 60%; top: 8px; width: 48px; height: 52px; border: 3px dotted #866d91; background: #eee0f5; color: #382642; font: 20px sans-serif; cursor: pointer; pointer-events: auto; transform: rotate(-9deg); box-shadow: 2px 3px 4px #0003; }
 .demo-stamp::after { content: 'DÉMO'; display: block; font: 8px sans-serif; }
-body.signal-demo .handle span { background: linear-gradient(135deg,#c2a2df,#a3d9dc,#f1d7a0); border-radius: 50%; box-shadow: 0 0 10px #c2a2df80; animation: orb-notice .7s ease-in-out 2; }
+body.signal-demo .handle span { border-radius: 50%; outline: 2px solid #c2a2df; outline-offset: 3px; animation: orb-notice .7s ease-in-out 2; }
 @keyframes orb-notice { 25% { transform: translateX(-4px) rotate(-9deg); } 75% { transform: translateX(4px) rotate(9deg); } }
 @keyframes stamp-peel { from { transform: translateY(-36px) rotate(8deg); opacity: .6; } to { transform: translateY(0) rotate(-9deg); opacity: 1; } }
 .demo-stamp { animation: stamp-peel .6s ease-out; }
@@ -431,7 +431,7 @@ body.composing .capsule-wrap > .day:not(.capsule-compose) { display: none; }
 #mTitle { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
 #mTime { font-size: 11px; }
 .handle::before { display: none; }
-.handle span { display: block; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #fff9, transparent 45%), conic-gradient(#db829e,#edc77c,#91c9a6,#8fbce0,#b299d7,#db829e); border: 1px solid #fff9; box-shadow: 0 2px 5px #0005; filter: none; }
+.handle span { display: block; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 28% 22%, #fff 0 3%, #ffffffa0 5%, transparent 27%), radial-gradient(circle at 65% 80%, #15152f99, transparent 65%), conic-gradient(#db829e,#edc77c,#91c9a6,#8fbce0,#b299d7,#db829e); border: 1px solid #ffffff70; box-shadow: inset -5px -6px 8px #19152b80, inset 3px 3px 5px #fff8, 2px 4px 5px #0006; filter: none; }
 body.signal-demo .handle span { width: 32px; height: 32px; }
 @media(max-width: 600px) { .header-context { width: 44%; font-size: 11px; flex-wrap: wrap; gap: 0 4px; } .logo { max-width: 26%; overflow: hidden; } .window-guide-toggle { top: 8px; } }
 </style>
@@ -3045,9 +3045,9 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
       e.preventDefault();
       el.setPointerCapture(e.pointerId);
       const startY = e.clientY, startD = dropT, span = railTopFor(1) - railTopFor(0);
-      let lx = e.clientX, moved = false;
-      const move = ev => { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - startY) > 5) moved = true; dropT = clamp(startD + (ev.clientY - startY) / span, 0, 1); if (el === handle) { swingV -= (ev.clientX - lx) * 2.2; lx = ev.clientX; } };
-      const up = ev => { if (el === handle && !moved && ev.type === 'pointerup') $('commandOptions').click(); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+      let lx = e.clientX;
+      const move = ev => { dropT = clamp(startD + (ev.clientY - startY) / span, 0, 1); if (el === handle) { swingV -= (ev.clientX - lx) * 2.2; lx = ev.clientX; } };
+      const up = ev => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
       el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
     });
   }
@@ -3074,7 +3074,6 @@ body.signal-demo .handle span { width: 32px; height: 32px; }
   });
 
   handle.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('commandOptions').click(); return; }
     const step = e.shiftKey ? 0.25 : 0.06;
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') dropT = clamp(dropT + step, 0, 1);
     else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') dropT = clamp(dropT - step, 0, 1);
